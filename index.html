@@ -2651,6 +2651,7 @@ function renderOverviewCharts() {
 }
 
 
+window.addEventListener('resize', () => {
   document.querySelectorAll('[id^="chart-"]').forEach(el => {
     const c = echarts.getInstanceByDom(el);
     if (c) c.resize();
