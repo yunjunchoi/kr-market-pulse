@@ -1,0 +1,81 @@
+{
+  "updated": "2026-03-09T07:00:00",
+  "data": {
+    "household":  [
+      {"TIME":"2015","DATA_VALUE":"142.3"},{"TIME":"2016","DATA_VALUE":"158.1"},
+      {"TIME":"2017","DATA_VALUE":"173.5"},{"TIME":"2018","DATA_VALUE":"165.2"},
+      {"TIME":"2019","DATA_VALUE":"182.4"},{"TIME":"2020","DATA_VALUE":"221.6"},
+      {"TIME":"2021","DATA_VALUE":"198.3"},{"TIME":"2022","DATA_VALUE":"175.8"},
+      {"TIME":"2023","DATA_VALUE":"189.5"},{"TIME":"2024","DATA_VALUE":"195.2"}
+    ],
+    "corporate":  [
+      {"TIME":"2015","DATA_VALUE":"98.4"},{"TIME":"2016","DATA_VALUE":"112.7"},
+      {"TIME":"2017","DATA_VALUE":"135.8"},{"TIME":"2018","DATA_VALUE":"128.3"},
+      {"TIME":"2019","DATA_VALUE":"105.6"},{"TIME":"2020","DATA_VALUE":"142.1"},
+      {"TIME":"2021","DATA_VALUE":"168.9"},{"TIME":"2022","DATA_VALUE":"152.4"},
+      {"TIME":"2023","DATA_VALUE":"138.7"},{"TIME":"2024","DATA_VALUE":"145.3"}
+    ],
+    "government": [
+      {"TIME":"2015","DATA_VALUE":"32.1"},{"TIME":"2016","DATA_VALUE":"28.5"},
+      {"TIME":"2017","DATA_VALUE":"35.2"},{"TIME":"2018","DATA_VALUE":"42.8"},
+      {"TIME":"2019","DATA_VALUE":"55.3"},{"TIME":"2020","DATA_VALUE":"98.7"},
+      {"TIME":"2021","DATA_VALUE":"78.4"},{"TIME":"2022","DATA_VALUE":"62.1"},
+      {"TIME":"2023","DATA_VALUE":"58.3"},{"TIME":"2024","DATA_VALUE":"52.6"}
+    ],
+    "financial":  [
+      {"TIME":"2015","DATA_VALUE":"285.6"},{"TIME":"2016","DATA_VALUE":"312.4"},
+      {"TIME":"2017","DATA_VALUE":"342.8"},{"TIME":"2018","DATA_VALUE":"328.5"},
+      {"TIME":"2019","DATA_VALUE":"298.7"},{"TIME":"2020","DATA_VALUE":"385.2"},
+      {"TIME":"2021","DATA_VALUE":"412.6"},{"TIME":"2022","DATA_VALUE":"378.4"},
+      {"TIME":"2023","DATA_VALUE":"352.8"},{"TIME":"2024","DATA_VALUE":"368.5"}
+    ],
+    "external":   [
+      {"TIME":"2015","DATA_VALUE":"45.2"},{"TIME":"2016","DATA_VALUE":"38.7"},
+      {"TIME":"2017","DATA_VALUE":"52.3"},{"TIME":"2018","DATA_VALUE":"28.4"},
+      {"TIME":"2019","DATA_VALUE":"35.6"},{"TIME":"2020","DATA_VALUE":"-12.3"},
+      {"TIME":"2021","DATA_VALUE":"42.8"},{"TIME":"2022","DATA_VALUE":"-8.5"},
+      {"TIME":"2023","DATA_VALUE":"22.4"},{"TIME":"2024","DATA_VALUE":"31.8"}
+    ],
+    "hh_assets_breakdown": {
+      "deposit":    [142.3,158.1,173.5,165.2,182.4,221.6,198.3,175.8,189.5,195.2],
+      "insurance":  [52.1, 58.3, 63.2, 68.5, 72.1, 78.4, 82.3, 85.6, 88.2, 91.5],
+      "stocks":     [28.4, 35.2, 48.6, 42.1, 38.5, 68.2, 75.4, 52.3, 62.8, 71.2],
+      "bonds":      [12.3, 10.8, 11.5, 14.2, 16.8, 22.4, 18.6, 15.3, 17.8, 19.4],
+      "funds":      [22.5, 28.4, 32.1, 28.6, 31.2, 38.5, 45.2, 38.7, 42.3, 46.8],
+      "years":      ["2015","2016","2017","2018","2019","2020","2021","2022","2023","2024"]
+    },
+    "corp_liabilities_breakdown": {
+      "bank_loan":  [185.3,198.4,215.6,228.3,242.1,278.5,305.2,312.8,298.5,285.4],
+      "bonds":      [82.4, 88.6, 95.2, 102.4,108.7,118.5,128.4,135.2,128.6,122.8],
+      "equity":     [312.5,345.8,398.2,382.4,365.8,425.6,498.3,452.1,478.5,512.4],
+      "years":      ["2015","2016","2017","2018","2019","2020","2021","2022","2023","2024"]
+    },
+    "sankey_latest": {
+      "year": "2024",
+      "nodes": [
+        {"name":"가계"},{"name":"기업"},{"name":"정부"},{"name":"금융기관"},{"name":"해외"},
+        {"name":"예금"},{"name":"주식·펀드"},{"name":"채권"},{"name":"보험·연금"},{"name":"대출"}
+      ],
+      "links": [
+        {"source":0,"target":5,"value":195.2,"label":"가계 → 예금"},
+        {"source":0,"target":6,"value":118.0,"label":"가계 → 주식·펀드"},
+        {"source":0,"target":7,"value":19.4, "label":"가계 → 채권"},
+        {"source":0,"target":8,"value":91.5, "label":"가계 → 보험·연금"},
+        {"source":1,"target":5,"value":85.4, "label":"기업 → 예금"},
+        {"source":1,"target":6,"value":42.3, "label":"기업 → 주식·펀드"},
+        {"source":1,"target":7,"value":28.6, "label":"기업 → 채권"},
+        {"source":2,"target":5,"value":32.6, "label":"정부 → 예금"},
+        {"source":2,"target":7,"value":20.0, "label":"정부 → 채권"},
+        {"source":4,"target":6,"value":71.2, "label":"해외 → 주식·펀드"},
+        {"source":4,"target":7,"value":32.8, "label":"해외 → 채권"},
+        {"source":5,"target":3,"value":313.2,"label":"예금 → 금융기관"},
+        {"source":6,"target":3,"value":231.5,"label":"주식·펀드 → 금융기관"},
+        {"source":7,"target":3,"value":100.8,"label":"채권 → 금융기관"},
+        {"source":8,"target":3,"value":91.5, "label":"보험·연금 → 금융기관"},
+        {"source":3,"target":9,"value":285.4,"label":"금융기관 → 대출(기업)"},
+        {"source":3,"target":1,"value":145.3,"label":"금융기관 → 기업투자"},
+        {"source":3,"target":4,"value":89.5, "label":"금융기관 → 해외투자"}
+      ]
+    }
+  }
+}

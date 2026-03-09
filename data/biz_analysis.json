@@ -1,0 +1,125 @@
+{
+  "updated": "2026-03-09T07:00:00",
+  "data": {
+    "manufacturing": {
+      "op_margin": [
+        {"TIME":"2010","DATA_VALUE":"5.8"},{"TIME":"2011","DATA_VALUE":"5.2"},
+        {"TIME":"2012","DATA_VALUE":"4.9"},{"TIME":"2013","DATA_VALUE":"4.6"},
+        {"TIME":"2014","DATA_VALUE":"4.8"},{"TIME":"2015","DATA_VALUE":"5.1"},
+        {"TIME":"2016","DATA_VALUE":"5.5"},{"TIME":"2017","DATA_VALUE":"6.2"},
+        {"TIME":"2018","DATA_VALUE":"5.9"},{"TIME":"2019","DATA_VALUE":"4.3"},
+        {"TIME":"2020","DATA_VALUE":"4.7"},{"TIME":"2021","DATA_VALUE":"6.1"},
+        {"TIME":"2022","DATA_VALUE":"5.3"},{"TIME":"2023","DATA_VALUE":"3.9"},
+        {"TIME":"2024","DATA_VALUE":"4.5"}
+      ],
+      "net_margin": [
+        {"TIME":"2010","DATA_VALUE":"4.2"},{"TIME":"2011","DATA_VALUE":"3.8"},
+        {"TIME":"2012","DATA_VALUE":"3.5"},{"TIME":"2013","DATA_VALUE":"3.1"},
+        {"TIME":"2014","DATA_VALUE":"3.3"},{"TIME":"2015","DATA_VALUE":"3.6"},
+        {"TIME":"2016","DATA_VALUE":"3.9"},{"TIME":"2017","DATA_VALUE":"4.8"},
+        {"TIME":"2018","DATA_VALUE":"4.5"},{"TIME":"2019","DATA_VALUE":"2.9"},
+        {"TIME":"2020","DATA_VALUE":"3.2"},{"TIME":"2021","DATA_VALUE":"4.7"},
+        {"TIME":"2022","DATA_VALUE":"3.8"},{"TIME":"2023","DATA_VALUE":"2.4"},
+        {"TIME":"2024","DATA_VALUE":"3.1"}
+      ],
+      "roe": [
+        {"TIME":"2010","DATA_VALUE":"10.8"},{"TIME":"2011","DATA_VALUE":"9.5"},
+        {"TIME":"2012","DATA_VALUE":"8.2"},{"TIME":"2013","DATA_VALUE":"7.1"},
+        {"TIME":"2014","DATA_VALUE":"7.3"},{"TIME":"2015","DATA_VALUE":"7.8"},
+        {"TIME":"2016","DATA_VALUE":"8.2"},{"TIME":"2017","DATA_VALUE":"10.1"},
+        {"TIME":"2018","DATA_VALUE":"9.6"},{"TIME":"2019","DATA_VALUE":"5.8"},
+        {"TIME":"2020","DATA_VALUE":"6.3"},{"TIME":"2021","DATA_VALUE":"9.4"},
+        {"TIME":"2022","DATA_VALUE":"8.1"},{"TIME":"2023","DATA_VALUE":"4.9"},
+        {"TIME":"2024","DATA_VALUE":"6.2"}
+      ],
+      "roa": [
+        {"TIME":"2010","DATA_VALUE":"5.1"},{"TIME":"2011","DATA_VALUE":"4.5"},
+        {"TIME":"2012","DATA_VALUE":"3.9"},{"TIME":"2013","DATA_VALUE":"3.3"},
+        {"TIME":"2014","DATA_VALUE":"3.4"},{"TIME":"2015","DATA_VALUE":"3.7"},
+        {"TIME":"2016","DATA_VALUE":"3.9"},{"TIME":"2017","DATA_VALUE":"4.8"},
+        {"TIME":"2018","DATA_VALUE":"4.5"},{"TIME":"2019","DATA_VALUE":"2.7"},
+        {"TIME":"2020","DATA_VALUE":"3.0"},{"TIME":"2021","DATA_VALUE":"4.5"},
+        {"TIME":"2022","DATA_VALUE":"3.8"},{"TIME":"2023","DATA_VALUE":"2.3"},
+        {"TIME":"2024","DATA_VALUE":"3.0"}
+      ],
+      "debt_ratio": [
+        {"TIME":"2010","DATA_VALUE":"110.5"},{"TIME":"2011","DATA_VALUE":"108.3"},
+        {"TIME":"2012","DATA_VALUE":"107.1"},{"TIME":"2013","DATA_VALUE":"104.2"},
+        {"TIME":"2014","DATA_VALUE":"99.8"},{"TIME":"2015","DATA_VALUE":"94.5"},
+        {"TIME":"2016","DATA_VALUE":"88.2"},{"TIME":"2017","DATA_VALUE":"82.1"},
+        {"TIME":"2018","DATA_VALUE":"79.5"},{"TIME":"2019","DATA_VALUE":"83.2"},
+        {"TIME":"2020","DATA_VALUE":"89.1"},{"TIME":"2021","DATA_VALUE":"85.3"},
+        {"TIME":"2022","DATA_VALUE":"88.7"},{"TIME":"2023","DATA_VALUE":"91.2"},
+        {"TIME":"2024","DATA_VALUE":"89.5"}
+      ],
+      "sales_growth": [
+        {"TIME":"2010","DATA_VALUE":"14.2"},{"TIME":"2011","DATA_VALUE":"11.8"},
+        {"TIME":"2012","DATA_VALUE":"3.5"},{"TIME":"2013","DATA_VALUE":"1.2"},
+        {"TIME":"2014","DATA_VALUE":"0.8"},{"TIME":"2015","DATA_VALUE":"-1.5"},
+        {"TIME":"2016","DATA_VALUE":"2.3"},{"TIME":"2017","DATA_VALUE":"10.2"},
+        {"TIME":"2018","DATA_VALUE":"8.1"},{"TIME":"2019","DATA_VALUE":"-3.4"},
+        {"TIME":"2020","DATA_VALUE":"-5.2"},{"TIME":"2021","DATA_VALUE":"15.8"},
+        {"TIME":"2022","DATA_VALUE":"12.3"},{"TIME":"2023","DATA_VALUE":"-7.1"},
+        {"TIME":"2024","DATA_VALUE":"3.2"}
+      ],
+      "interest_cov": [
+        {"TIME":"2010","DATA_VALUE":"4.2"},{"TIME":"2011","DATA_VALUE":"3.8"},
+        {"TIME":"2012","DATA_VALUE":"3.5"},{"TIME":"2013","DATA_VALUE":"3.1"},
+        {"TIME":"2014","DATA_VALUE":"3.2"},{"TIME":"2015","DATA_VALUE":"3.5"},
+        {"TIME":"2016","DATA_VALUE":"4.1"},{"TIME":"2017","DATA_VALUE":"5.2"},
+        {"TIME":"2018","DATA_VALUE":"4.9"},{"TIME":"2019","DATA_VALUE":"3.2"},
+        {"TIME":"2020","DATA_VALUE":"3.8"},{"TIME":"2021","DATA_VALUE":"5.5"},
+        {"TIME":"2022","DATA_VALUE":"4.2"},{"TIME":"2023","DATA_VALUE":"2.8"},
+        {"TIME":"2024","DATA_VALUE":"3.3"}
+      ]
+    },
+    "non_manufacturing": {
+      "op_margin": [
+        {"TIME":"2010","DATA_VALUE":"4.1"},{"TIME":"2011","DATA_VALUE":"4.0"},
+        {"TIME":"2012","DATA_VALUE":"3.8"},{"TIME":"2013","DATA_VALUE":"3.9"},
+        {"TIME":"2014","DATA_VALUE":"4.2"},{"TIME":"2015","DATA_VALUE":"4.5"},
+        {"TIME":"2016","DATA_VALUE":"4.8"},{"TIME":"2017","DATA_VALUE":"5.1"},
+        {"TIME":"2018","DATA_VALUE":"5.0"},{"TIME":"2019","DATA_VALUE":"4.2"},
+        {"TIME":"2020","DATA_VALUE":"3.5"},{"TIME":"2021","DATA_VALUE":"4.8"},
+        {"TIME":"2022","DATA_VALUE":"4.5"},{"TIME":"2023","DATA_VALUE":"4.1"},
+        {"TIME":"2024","DATA_VALUE":"4.3"}
+      ],
+      "roe": [
+        {"TIME":"2010","DATA_VALUE":"7.5"},{"TIME":"2011","DATA_VALUE":"7.8"},
+        {"TIME":"2012","DATA_VALUE":"7.2"},{"TIME":"2013","DATA_VALUE":"7.5"},
+        {"TIME":"2014","DATA_VALUE":"7.8"},{"TIME":"2015","DATA_VALUE":"8.1"},
+        {"TIME":"2016","DATA_VALUE":"8.5"},{"TIME":"2017","DATA_VALUE":"8.9"},
+        {"TIME":"2018","DATA_VALUE":"8.7"},{"TIME":"2019","DATA_VALUE":"7.2"},
+        {"TIME":"2020","DATA_VALUE":"5.1"},{"TIME":"2021","DATA_VALUE":"7.8"},
+        {"TIME":"2022","DATA_VALUE":"7.5"},{"TIME":"2023","DATA_VALUE":"6.8"},
+        {"TIME":"2024","DATA_VALUE":"7.1"}
+      ]
+    },
+    "by_size": {
+      "large_op_margin": [
+        {"TIME":"2018","DATA_VALUE":"6.5"},{"TIME":"2019","DATA_VALUE":"4.1"},
+        {"TIME":"2020","DATA_VALUE":"4.5"},{"TIME":"2021","DATA_VALUE":"6.8"},
+        {"TIME":"2022","DATA_VALUE":"5.5"},{"TIME":"2023","DATA_VALUE":"3.5"},
+        {"TIME":"2024","DATA_VALUE":"4.2"}
+      ],
+      "sme_op_margin": [
+        {"TIME":"2018","DATA_VALUE":"4.8"},{"TIME":"2019","DATA_VALUE":"3.9"},
+        {"TIME":"2020","DATA_VALUE":"4.1"},{"TIME":"2021","DATA_VALUE":"5.2"},
+        {"TIME":"2022","DATA_VALUE":"4.8"},{"TIME":"2023","DATA_VALUE":"4.3"},
+        {"TIME":"2024","DATA_VALUE":"4.6"}
+      ],
+      "large_roe": [
+        {"TIME":"2018","DATA_VALUE":"10.2"},{"TIME":"2019","DATA_VALUE":"5.5"},
+        {"TIME":"2020","DATA_VALUE":"6.1"},{"TIME":"2021","DATA_VALUE":"9.8"},
+        {"TIME":"2022","DATA_VALUE":"8.3"},{"TIME":"2023","DATA_VALUE":"4.5"},
+        {"TIME":"2024","DATA_VALUE":"6.0"}
+      ],
+      "sme_roe": [
+        {"TIME":"2018","DATA_VALUE":"8.5"},{"TIME":"2019","DATA_VALUE":"6.3"},
+        {"TIME":"2020","DATA_VALUE":"6.5"},{"TIME":"2021","DATA_VALUE":"8.2"},
+        {"TIME":"2022","DATA_VALUE":"7.8"},{"TIME":"2023","DATA_VALUE":"5.8"},
+        {"TIME":"2024","DATA_VALUE":"6.5"}
+      ]
+    }
+  }
+}

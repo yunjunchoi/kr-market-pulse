@@ -1,0 +1,2663 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KR Market Pulse</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
+<style>
+/* ============================================================
+   DESIGN SYSTEM — Bloomberg Dark + Amber Accent
+   ============================================================ */
+:root {
+  --bg-base:    #0a0c0f;
+  --bg-panel:   #0f1318;
+  --bg-card:    #141920;
+  --bg-hover:   #1a2030;
+  --border:     #1e2533;
+  --border-light: #2a3445;
+
+  --amber:      #f5a623;
+  --amber-dim:  #a36e12;
+  --green:      #00d68f;
+  --green-dim:  #00724c;
+  --red:        #ff4757;
+  --red-dim:    #8b1a25;
+  --blue:       #4d9fff;
+  --blue-dim:   #1e4a80;
+  --purple:     #a78bfa;
+
+  --text-primary:   #e8edf5;
+  --text-secondary: #8899b0;
+  --text-muted:     #4a5568;
+  --text-amber:     #f5a623;
+
+  --font-data: 'IBM Plex Mono', monospace;
+  --font-ui:   'Noto Sans KR', sans-serif;
+
+  --radius: 6px;
+  --transition: 180ms ease;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: var(--bg-base); }
+::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 2px; }
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  height: 52px;
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 100;
+}
+
+.logo {
+  display: flex; align-items: center; gap: 10px;
+}
+.logo-mark {
+  width: 28px; height: 28px;
+  background: linear-gradient(135deg, var(--amber) 0%, #e08c10 100%);
+  border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-data);
+  font-size: 11px; font-weight: 600; color: #0a0c0f;
+  letter-spacing: -0.5px;
+}
+.logo-text {
+  font-family: var(--font-data);
+  font-size: 14px; font-weight: 500;
+  color: var(--text-primary);
+  letter-spacing: 0.5px;
+}
+.logo-sub {
+  font-size: 10px; color: var(--text-muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.header-right {
+  display: flex; align-items: center; gap: 20px;
+}
+.update-info {
+  font-family: var(--font-data);
+  font-size: 10px; color: var(--text-muted);
+  text-align: right;
+}
+.update-dot {
+  display: inline-block;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 6px var(--green);
+  animation: pulse 2s infinite;
+  margin-right: 4px;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* ============================================================
+   TICKER BAR
+   ============================================================ */
+.ticker-bar {
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  height: 34px;
+  display: flex; align-items: center; gap: 28px;
+  overflow: hidden;
+}
+.ticker-item {
+  display: flex; align-items: center; gap: 6px;
+  white-space: nowrap; flex-shrink: 0;
+}
+.ticker-label {
+  font-family: var(--font-data);
+  font-size: 10px; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+.ticker-val {
+  font-family: var(--font-data);
+  font-size: 12px; font-weight: 500;
+  color: var(--text-primary);
+}
+.ticker-chg {
+  font-family: var(--font-data);
+  font-size: 10px;
+}
+.up { color: var(--green); }
+.down { color: var(--red); }
+.flat { color: var(--text-muted); }
+.ticker-sep { color: var(--border-light); font-size: 14px; }
+
+/* ============================================================
+   NAVIGATION TABS
+   ============================================================ */
+.nav-tabs {
+  display: flex; align-items: center;
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  gap: 2px;
+}
+.tab-btn {
+  display: flex; align-items: center; gap: 6px;
+  padding: 12px 16px;
+  background: transparent; border: none;
+  color: var(--text-muted);
+  font-family: var(--font-ui); font-size: 12px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all var(--transition);
+  white-space: nowrap;
+}
+.tab-btn:hover { color: var(--text-primary); background: var(--bg-hover); }
+.tab-btn.active {
+  color: var(--amber);
+  border-bottom-color: var(--amber);
+  background: rgba(245, 166, 35, 0.05);
+}
+.tab-icon { font-size: 14px; }
+.tab-badge {
+  font-family: var(--font-data);
+  font-size: 9px; padding: 1px 5px;
+  background: var(--bg-card); border-radius: 10px;
+  color: var(--text-muted);
+}
+
+/* ============================================================
+   MAIN LAYOUT
+   ============================================================ */
+.main-content {
+  padding: 20px 24px;
+  max-width: 1600px; margin: 0 auto;
+}
+
+.page { display: none; }
+.page.active { display: block; }
+
+/* ============================================================
+   GRID SYSTEM
+   ============================================================ */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.grid-4-3 { display: grid; grid-template-columns: 3fr 1fr; gap: 16px; }
+.grid-3-1 { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
+.mt16 { margin-top: 16px; }
+.mt12 { margin-top: 12px; }
+
+/* ============================================================
+   KPI CARDS
+   ============================================================ */
+.kpi-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  position: relative; overflow: hidden;
+  transition: border-color var(--transition);
+}
+.kpi-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--amber) 0%, transparent 100%);
+  opacity: 0.6;
+}
+.kpi-card:hover { border-color: var(--border-light); }
+
+.kpi-label {
+  font-size: 10px; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 0.8px;
+  margin-bottom: 8px;
+}
+.kpi-value {
+  font-family: var(--font-data);
+  font-size: 26px; font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.kpi-unit {
+  font-size: 13px; color: var(--text-muted);
+  margin-left: 2px;
+}
+.kpi-change {
+  font-family: var(--font-data);
+  font-size: 11px; margin-bottom: 4px;
+}
+.kpi-desc {
+  font-size: 10px; color: var(--text-muted);
+}
+.kpi-sparkline { margin-top: 10px; }
+
+/* ============================================================
+   PANELS
+   ============================================================ */
+.panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.panel-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(255,255,255,0.01);
+}
+.panel-title {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12px; font-weight: 500;
+  color: var(--text-primary);
+  letter-spacing: 0.3px;
+}
+.panel-title-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--amber);
+}
+.panel-controls {
+  display: flex; gap: 4px;
+}
+.ctrl-btn {
+  padding: 4px 10px;
+  background: var(--bg-hover); border: 1px solid var(--border);
+  border-radius: 4px;
+  font-family: var(--font-data); font-size: 10px;
+  color: var(--text-muted); cursor: pointer;
+  transition: all var(--transition);
+}
+.ctrl-btn:hover, .ctrl-btn.active {
+  background: rgba(245, 166, 35, 0.1);
+  border-color: var(--amber-dim);
+  color: var(--amber);
+}
+.panel-body { padding: 16px 18px; }
+
+/* ============================================================
+   CHART CONTAINER
+   ============================================================ */
+.chart-box {
+  width: 100%; height: 280px;
+}
+.chart-box-sm { height: 200px; }
+.chart-box-lg { height: 360px; }
+
+/* ============================================================
+   DATA TABLE
+   ============================================================ */
+.data-table {
+  width: 100%; border-collapse: collapse;
+  font-family: var(--font-data); font-size: 11px;
+}
+.data-table th {
+  text-align: left; padding: 8px 12px;
+  color: var(--text-muted); font-weight: 400;
+  font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--border);
+}
+.data-table td {
+  padding: 9px 12px;
+  border-bottom: 1px solid rgba(30, 37, 51, 0.5);
+  color: var(--text-primary);
+}
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tr:hover td { background: var(--bg-hover); }
+.data-table td.num { text-align: right; }
+.data-table td.pos { color: var(--green); }
+.data-table td.neg { color: var(--red); }
+.data-table td.label { color: var(--text-secondary); }
+
+/* ============================================================
+   METRIC ROW (horizontal kpi strip)
+   ============================================================ */
+.metric-strip {
+  display: flex; gap: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.metric-cell {
+  flex: 1;
+  padding: 14px 16px;
+  border-right: 1px solid var(--border);
+  position: relative;
+}
+.metric-cell:last-child { border-right: none; }
+.metric-cell-label {
+  font-size: 10px; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+.metric-cell-val {
+  font-family: var(--font-data);
+  font-size: 20px; font-weight: 500;
+  color: var(--text-primary);
+}
+.metric-cell-sub {
+  font-family: var(--font-data);
+  font-size: 10px; color: var(--text-muted);
+  margin-top: 3px;
+}
+
+/* ============================================================
+   SECTION LABEL
+   ============================================================ */
+.section-label {
+  font-size: 10px; font-weight: 500;
+  color: var(--text-muted); text-transform: uppercase;
+  letter-spacing: 1px;
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 12px;
+}
+.section-label::after {
+  content: '';
+  flex: 1; height: 1px;
+  background: var(--border);
+}
+
+/* ============================================================
+   TOGGLE SWITCH (chart metric selector)
+   ============================================================ */
+.metric-selector {
+  display: flex; gap: 6px; flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.metric-chip {
+  padding: 4px 12px;
+  background: var(--bg-hover); border: 1px solid var(--border);
+  border-radius: 20px;
+  font-size: 11px; color: var(--text-muted);
+  cursor: pointer; transition: all var(--transition);
+}
+.metric-chip:hover { border-color: var(--border-light); color: var(--text-primary); }
+.metric-chip.active {
+  background: rgba(245, 166, 35, 0.15);
+  border-color: var(--amber);
+  color: var(--amber);
+}
+
+/* ============================================================
+   GAUGE / PROGRESS
+   ============================================================ */
+.gauge-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.gauge-fill { height: 100%; border-radius: 2px; transition: width 0.8s ease; }
+
+/* ============================================================
+   INSIGHT CARD
+   ============================================================ */
+.insight-card {
+  background: rgba(245, 166, 35, 0.05);
+  border: 1px solid rgba(245, 166, 35, 0.2);
+  border-left: 3px solid var(--amber);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  font-size: 12px; line-height: 1.7;
+  color: var(--text-secondary);
+}
+.insight-card strong { color: var(--amber); }
+
+/* ============================================================
+   STATUS BADGE
+   ============================================================ */
+.badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 8px; border-radius: 10px;
+  font-family: var(--font-data); font-size: 10px;
+}
+.badge-green { background: rgba(0,214,143,0.1); color: var(--green); border: 1px solid rgba(0,214,143,0.2); }
+.badge-red   { background: rgba(255,71,87,0.1); color: var(--red); border: 1px solid rgba(255,71,87,0.2); }
+.badge-amber { background: rgba(245,166,35,0.1); color: var(--amber); border: 1px solid rgba(245,166,35,0.2); }
+.badge-blue  { background: rgba(77,159,255,0.1); color: var(--blue); border: 1px solid rgba(77,159,255,0.2); }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 1100px) {
+  .grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .grid-3 { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 768px) {
+  .grid-2, .grid-3, .grid-4, .grid-4-3, .grid-3-1 {
+    grid-template-columns: 1fr;
+  }
+  .metric-strip { flex-direction: column; }
+  .tab-btn { padding: 10px 10px; font-size: 11px; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ══════════════════════════════════════════════
+     HEADER
+══════════════════════════════════════════════ -->
+<header class="header">
+  <div class="logo">
+    <div class="logo-mark">KM</div>
+    <div>
+      <div class="logo-text">KR MARKET PULSE</div>
+      <div class="logo-sub">한국 거시경제 · 투자 시그널</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="update-info">
+      <span class="update-dot"></span>
+      <span id="last-updated">데이터 로딩 중...</span>
+    </div>
+  </div>
+</header>
+
+<!-- ══════════════════════════════════════════════
+     TICKER BAR (실시간 주요 지표)
+══════════════════════════════════════════════ -->
+<div class="ticker-bar">
+  <div class="ticker-item">
+    <span class="ticker-label">기준금리</span>
+    <span class="ticker-val" id="t-baserate">—</span>
+    <span class="ticker-chg flat">%</span>
+  </div>
+  <span class="ticker-sep">|</span>
+  <div class="ticker-item">
+    <span class="ticker-label">국고채 3Y</span>
+    <span class="ticker-val" id="t-bond3y">—</span>
+    <span class="ticker-chg flat">%</span>
+  </div>
+  <span class="ticker-sep">|</span>
+  <div class="ticker-item">
+    <span class="ticker-label">국고채 10Y</span>
+    <span class="ticker-val" id="t-bond10y">—</span>
+    <span class="ticker-chg flat">%</span>
+  </div>
+  <span class="ticker-sep">|</span>
+  <div class="ticker-item">
+    <span class="ticker-label">제조업 OPM</span>
+    <span class="ticker-val" id="t-opm">—</span>
+    <span class="ticker-chg flat">%</span>
+  </div>
+  <span class="ticker-sep">|</span>
+  <div class="ticker-item">
+    <span class="ticker-label">제조업 ROE</span>
+    <span class="ticker-val" id="t-roe">—</span>
+    <span class="ticker-chg flat">%</span>
+  </div>
+  <span class="ticker-sep">|</span>
+  <div class="ticker-item">
+    <span class="ticker-label">부채비율</span>
+    <span class="ticker-val" id="t-debt">—</span>
+    <span class="ticker-chg flat">%</span>
+  </div>
+  <span class="ticker-sep">|</span>
+  <div class="ticker-item">
+    <span class="ticker-label">이자보상배율</span>
+    <span class="ticker-val" id="t-icr">—</span>
+    <span class="ticker-chg flat">배</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     NAV TABS
+══════════════════════════════════════════════ -->
+<nav class="nav-tabs">
+  <button class="tab-btn" data-tab="overview" onclick="switchTab('overview')">
+    <span class="tab-icon">⬡</span> Overview
+  </button>
+  <button class="tab-btn active" data-tab="biz" onclick="switchTab('biz')">
+    <span class="tab-icon">◈</span> 기업수익성
+    <span class="tab-badge">KOSPI/KOSDAQ</span>
+  </button>
+  <button class="tab-btn" data-tab="funds" onclick="switchTab('funds')">
+    <span class="tab-icon">◇</span> 자금순환
+  </button>
+  <button class="tab-btn" data-tab="external" onclick="switchTab('external')">
+    <span class="tab-icon">◎</span> 대외자금흐름
+  </button>
+  <button class="tab-btn" data-tab="signal" onclick="switchTab('signal')">
+    <span class="tab-icon">◉</span> 투자 시그널
+    <span class="tab-badge">Beta</span>
+  </button>
+</nav>
+
+<!-- ══════════════════════════════════════════════
+     MAIN CONTENT
+══════════════════════════════════════════════ -->
+<main class="main-content">
+
+  <!-- ==================== PAGE: OVERVIEW ==================== -->
+  <div id="page-overview" class="page">
+    <div class="section-label" style="margin-bottom:16px">핵심 거시지표 한눈에</div>
+
+    <!-- 12 KPI Cards -->
+    <div class="grid-4">
+      <div class="kpi-card">
+        <div class="kpi-label">한국은행 기준금리</div>
+        <div class="kpi-value" id="ov-baserate">—<span class="kpi-unit">%</span></div>
+        <div class="kpi-change flat" id="ov-baserate-chg">전월 대비 —</div>
+        <div class="kpi-desc">최근 월 기준</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">장단기 금리차 (10Y-3Y)</div>
+        <div class="kpi-value" id="ov-spread-val">—<span class="kpi-unit">bp</span></div>
+        <div class="kpi-change flat" id="ov-spread-chg">전월 대비 —</div>
+        <div class="kpi-desc">수익률 곡선 기울기</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">소비자물가 (CPI)</div>
+        <div class="kpi-value" id="ov-cpi">—<span class="kpi-unit">%</span></div>
+        <div class="kpi-change flat" id="ov-cpi-chg">전월 대비 —</div>
+        <div class="kpi-desc">전년 동기 대비</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">M2 광의통화 증가율</div>
+        <div class="kpi-value" id="ov-m2g">—<span class="kpi-unit">%</span></div>
+        <div class="kpi-change flat" id="ov-m2g-chg">전년 동기 대비</div>
+        <div class="kpi-desc">유동성 사이클 지표</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">제조업 영업이익률</div>
+        <div class="kpi-value" id="ov-opm">—<span class="kpi-unit">%</span></div>
+        <div class="kpi-change" id="ov-opm-chg">전년 대비 —</div>
+        <div class="kpi-desc">기업경영분석 기준 (연간)</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">제조업 ROE</div>
+        <div class="kpi-value" id="ov-roe">—<span class="kpi-unit">%</span></div>
+        <div class="kpi-change" id="ov-roe-chg">전년 대비 —</div>
+        <div class="kpi-desc">자기자본이익률</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">경상수지</div>
+        <div class="kpi-value" id="ov-ca">—<span class="kpi-unit">억$</span></div>
+        <div class="kpi-change flat" id="ov-ca-chg">전월 대비 —</div>
+        <div class="kpi-desc">최근 월 기준</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">원/달러 환율</div>
+        <div class="kpi-value" id="ov-usd">—<span class="kpi-unit">원</span></div>
+        <div class="kpi-change flat" id="ov-usd-chg">전월 대비 —</div>
+        <div class="kpi-desc">월말 기준</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">수출 (통관)</div>
+        <div class="kpi-value" id="ov-exp">—<span class="kpi-unit">억$</span></div>
+        <div class="kpi-change flat" id="ov-exp-chg">전월 대비 —</div>
+        <div class="kpi-desc">최근 월 기준</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">소비자심리지수</div>
+        <div class="kpi-value" id="ov-csi">—</div>
+        <div class="kpi-change flat" id="ov-csi-chg">100 기준선 대비</div>
+        <div class="kpi-desc">100 이상 = 낙관</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">부채비율 (제조업)</div>
+        <div class="kpi-value" id="ov-debt">—<span class="kpi-unit">%</span></div>
+        <div class="kpi-change flat" id="ov-debt-chg">전년 대비 —</div>
+        <div class="kpi-desc">재무건전성 지표</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">매크로 종합 신호</div>
+        <div class="kpi-value" id="ov-signal-val" style="font-size:18px">—</div>
+        <div class="kpi-change flat" id="ov-signal-desc">투자 시그널 탭 참고</div>
+        <div class="kpi-desc">Phase 3 복합 스코어</div>
+      </div>
+    </div>
+
+    <!-- Charts Row 1 -->
+    <div class="grid-2 mt16">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title"><span class="panel-title-dot"></span> 금리 추이</div>
+          <div class="panel-controls">
+            <button class="ctrl-btn active" onclick="setRatePeriod('3y',this)">3Y</button>
+            <button class="ctrl-btn" onclick="setRatePeriod('5y',this)">5Y</button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div id="chart-rates-ov" class="chart-box"></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title"><span class="panel-title-dot"></span> 기업수익성 요약</div>
+        </div>
+        <div class="panel-body">
+          <div id="chart-biz-ov" class="chart-box"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts Row 2 -->
+    <div class="grid-2 mt16">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title"><span class="panel-title-dot"></span> CPI vs PPI vs M2증가율</div>
+        </div>
+        <div class="panel-body">
+          <div id="chart-ov-inflation" class="chart-box"></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title"><span class="panel-title-dot"></span> 경상수지 & 환율 추이</div>
+        </div>
+        <div class="panel-body">
+          <div id="chart-ov-ext" class="chart-box"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GDP + 소비자심리 -->
+    <div class="mt16">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title"><span class="panel-title-dot"></span> 실질 GDP 성장률 & 소비자심리지수</div>
+        </div>
+        <div class="panel-body">
+          <div id="chart-ov-gdp" class="chart-box"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE: 기업수익성 ==================== -->
+  <div id="page-biz" class="page active">
+
+    <!-- KPI Strip -->
+    <div class="metric-strip" style="margin-bottom:16px">
+      <div class="metric-cell">
+        <div class="metric-cell-label">제조업 영업이익률</div>
+        <div class="metric-cell-val up" id="biz-opm">—%</div>
+        <div class="metric-cell-sub" id="biz-opm-yr">최신 연도</div>
+      </div>
+      <div class="metric-cell">
+        <div class="metric-cell-label">제조업 ROE</div>
+        <div class="metric-cell-val" id="biz-roe">—%</div>
+        <div class="metric-cell-sub" id="biz-roe-yr">최신 연도</div>
+      </div>
+      <div class="metric-cell">
+        <div class="metric-cell-label">제조업 ROA</div>
+        <div class="metric-cell-val" id="biz-roa">—%</div>
+        <div class="metric-cell-sub" id="biz-roa-yr">최신 연도</div>
+      </div>
+      <div class="metric-cell">
+        <div class="metric-cell-label">부채비율</div>
+        <div class="metric-cell-val" id="biz-debt">—%</div>
+        <div class="metric-cell-sub" id="biz-debt-yr">제조업 기준</div>
+      </div>
+      <div class="metric-cell">
+        <div class="metric-cell-label">이자보상배율</div>
+        <div class="metric-cell-val" id="biz-icr">—배</div>
+        <div class="metric-cell-sub">1 미만 = 위험</div>
+      </div>
+      <div class="metric-cell">
+        <div class="metric-cell-label">매출액 증가율</div>
+        <div class="metric-cell-val" id="biz-sg">—%</div>
+        <div class="metric-cell-sub" id="biz-sg-yr">제조업 전체</div>
+      </div>
+    </div>
+
+    <!-- 메인 차트 + 테이블 -->
+    <div class="grid-4-3">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title"><span class="panel-title-dot"></span> 수익성 지표 장기 추이 (제조업)</div>
+          <div class="panel-controls">
+            <button class="ctrl-btn active" id="bm-opm" onclick="setBizMetric('op_margin',this)">영업이익률</button>
+            <button class="ctrl-btn" id="bm-roe" onclick="setBizMetric('roe',this)">ROE</button>
+            <button class="ctrl-btn" id="bm-roa" onclick="setBizMetric('roa',this)">ROA</button>
+            <button class="ctrl-btn" id="bm-nm" onclick="setBizMetric('net_margin',this)">순이익률</button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div id="chart-biz-main" class="chart-box-lg"></div>
+        </div>
+      </div>
+
+      <!-- 우측 사이드 -->
+      <div style="display:flex; flex-direction:column; gap:16px;">
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title"><span class="panel-title-dot"></span> 재무건전성</div>
+          </div>
+          <div class="panel-body">
+            <div id="chart-biz-radar" class="chart-box-sm"></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title"><span class="panel-title-dot"></span> 핵심 지표 현황</div>
+          </div>
+          <div class="panel-body" style="padding:12px;">
+            <table class="data-table" id="biz-kpi-table">
+              <thead>
+                <tr>
+                  <th>지표</th>
+                  <th>최신</th>
+                  <th>전년</th>
+                  <th>추세</th>
+                </tr>
+              </thead>
+              <tbody id="biz-table-body">
+                <tr><td colspan="4" style="color:var(--text-muted); text-align:center; padding:20px;">데이터 로딩 중...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 제조업 vs 비제조업 비교 -->
+    <div class="grid-2 mt16">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title"><span class="panel-title-dot"></span> 제조업 vs 비제조업 영업이익률</div>
+        </div>
+        <div class="panel-body">
+          <div id="chart-mfg-vs-nmfg" class="chart-box"></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title"><span class="panel-title-dot"></span> 대기업 vs 중소기업 수익성</div>
+          <div class="panel-controls">
+            <button class="ctrl-btn active" onclick="setSizeMetric('op_margin',this)">영업이익률</button>
+            <button class="ctrl-btn" onclick="setSizeMetric('roe',this)">ROE</button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div id="chart-size" class="chart-box"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 부채비율 & 이자보상배율 -->
+    <div class="grid-2 mt16">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title"><span class="panel-title-dot"></span> 부채비율 추이</div>
+        </div>
+        <div class="panel-body">
+          <div id="chart-debt" class="chart-box-sm"></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title"><span class="panel-title-dot"></span> 이자보상배율 & 매출증가율</div>
+        </div>
+        <div class="panel-body">
+          <div id="chart-icr" class="chart-box-sm"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 인사이트 박스 -->
+    <div class="insight-card mt16" id="biz-insight">
+      데이터를 분석 중입니다...
+    </div>
+
+  </div><!-- /page-biz -->
+
+  <!-- ==================== PAGE: 자금순환 ==================== -->
+  <div id="page-funds" class="page">
+
+    <!-- KPI Strip -->
+    <div class="metric-strip" style="margin-bottom:16px">
+      <div class="metric-cell">
+        <div class="metric-cell-label">가계 자금운용</div>
+        <div class="metric-cell-val" id="fof-hh">—</div>
+        <div class="metric-cell-sub">조원 (최신연도)</div>
+      </div>
+      <div class="metric-cell">
+        <div class="metric-cell-label">기업 자금운용</div>
+        <div class="metric-cell-val" id="fof-corp">—</div>
+        <div class="metric-cell-sub">조원 (최신연도)</div>
+      </div>
+      <div class="metric-cell">
+        <div class="metric-cell-label">정부 자금운용</div>
+        <div class="metric-cell-val" id="fof-gov">—</div>
+        <div class="metric-cell-sub">조원 (최신연도)</div>
+      </div>
+      <div class="metric-cell">
+        <div class="metric-cell-label">금융기관 중개</div>
+        <div class="metric-cell-val" id="fof-fin">—</div>
+        <div class="metric-cell-sub">조원 (최신연도)</div>
+      </div>
+      <div class="metric-cell">
+        <div class="metric-cell-label">해외 순유입</div>
+        <div class="metric-cell-val" id="fof-ext">—</div>
+        <div class="metric-cell-sub">조원 (+유입 / -유출)</div>
+      </div>
+    </div>
+
+    <!-- Sankey + 부문별 추이 -->
+    <div class="grid-3-1">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title"><span class="panel-title-dot"></span> 부문간 자금 흐름 (Sankey)</div>
+          <div style="font-size:10px; color:var(--text-muted)" id="fof-sankey-year">—년 기준</div>
+        </div>
+        <div class="panel-body">
+          <div id="chart-sankey" style="height:380px"></div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title"><span class="panel-title-dot"></span> 부문별 자금운용 추이</div>
+          </div>
+          <div class="panel-body">
+            <div id="chart-fof-trend" class="chart-box-sm"></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title"><span class="panel-title-dot"></span> 해외 자금 순유입</div>
+          </div>
+          <div class="panel-body">
+            <div id="chart-fof-ext" style="height:160px"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 가계 자산구성 & 기업 부채구성 -->
+    <div class="grid-2 mt16">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title"><span class="panel-title-dot"></span> 가계 금융자산 구성 변화</div>
+          <span class="badge badge-amber">투자 행태 분석</span>
+        </div>
+        <div class="panel-body">
+          <div id="chart-hh-assets" class="chart-box"></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title"><span class="panel-title-dot"></span> 기업 자금조달 구조</div>
+          <span class="badge badge-blue">부채 vs 자본</span>
+        </div>
+        <div class="panel-body">
+          <div id="chart-corp-liab" class="chart-box"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="insight-card mt16" id="fof-insight">자금순환 데이터 분석 중...</div>
+  </div>
+
+  <!-- ==================== PAGE: 대외자금흐름 ==================== -->
+  <div id="page-external" class="page">
+
+    <!-- KPI Strip -->
+    <div class="metric-strip" style="margin-bottom:16px">
+      <div class="metric-cell">
+        <div class="metric-cell-label">경상수지 (최신월)</div>
+        <div class="metric-cell-val up" id="ext-ca">—</div>
+        <div class="metric-cell-sub">억달러</div>
+      </div>
+      <div class="metric-cell">
+        <div class="metric-cell-label">상품수지</div>
+        <div class="metric-cell-val" id="ext-goods">—</div>
+        <div class="metric-cell-sub">억달러</div>
+      </div>
+      <div class="metric-cell">
+        <div class="metric-cell-label">서비스수지</div>
+        <div class="metric-cell-val down" id="ext-services">—</div>
+        <div class="metric-cell-sub">억달러 (관광적자)</div>
+      </div>
+      <div class="metric-cell">
+        <div class="metric-cell-label">수출 (최신월)</div>
+        <div class="metric-cell-val" id="ext-exports">—</div>
+        <div class="metric-cell-sub">억달러</div>
+      </div>
+      <div class="metric-cell">
+        <div class="metric-cell-label">무역수지</div>
+        <div class="metric-cell-val" id="ext-trade-balance">—</div>
+        <div class="metric-cell-sub">억달러 (수출-수입)</div>
+      </div>
+      <div class="metric-cell">
+        <div class="metric-cell-label">원/달러 환율</div>
+        <div class="metric-cell-val" id="ext-usd">—</div>
+        <div class="metric-cell-sub">원 (최신월)</div>
+      </div>
+    </div>
+
+    <!-- 경상수지 분해 + 환율 -->
+    <div class="grid-2">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title"><span class="panel-title-dot"></span> 경상수지 구성 분해</div>
+          <div class="panel-controls">
+            <button class="ctrl-btn active" onclick="setBopView('stack',this)">누적</button>
+            <button class="ctrl-btn" onclick="setBopView('line',this)">선형</button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div id="chart-bop-decomp" class="chart-box-lg"></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title"><span class="panel-title-dot"></span> 환율 추이 (KRW)</div>
+          <div class="panel-controls">
+            <button class="ctrl-btn active" onclick="setFxPair('usd',this)">USD</button>
+            <button class="ctrl-btn" onclick="setFxPair('jpy',this)">JPY/100</button>
+            <button class="ctrl-btn" onclick="setFxPair('eur',this)">EUR</button>
+            <button class="ctrl-btn" onclick="setFxPair('all',this)">전체</button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div id="chart-fx" class="chart-box-lg"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 수출입 상세 -->
+    <div class="grid-2 mt16">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title"><span class="panel-title-dot"></span> 수출입 및 무역수지</div>
+        </div>
+        <div class="panel-body">
+          <div id="chart-trade" class="chart-box"></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title"><span class="panel-title-dot"></span> 수출 품목별 비중</div>
+          <div class="panel-controls">
+            <button class="ctrl-btn active" onclick="setExportView('bar',this)">막대</button>
+            <button class="ctrl-btn" onclick="setExportView('pie',this)">파이</button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div id="chart-export-product" class="chart-box"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 수출 지역별 -->
+    <div class="mt16">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title"><span class="panel-title-dot"></span> 지역별 수출 구조 변화</div>
+          <span class="badge badge-amber">중국 의존도 vs 미국 비중 역전</span>
+        </div>
+        <div class="panel-body">
+          <div id="chart-export-region" class="chart-box"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 수출-환율-경상수지 삼각 관계 -->
+    <div class="mt16">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title"><span class="panel-title-dot"></span> 수출·환율·경상수지 복합 추이</div>
+          <span class="badge badge-blue">매크로 연동 분석</span>
+        </div>
+        <div class="panel-body">
+          <div id="chart-ext-combo" class="chart-box"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="insight-card mt16" id="ext-insight">대외자금흐름 데이터 분석 중...</div>
+  </div>
+
+  <!-- ==================== PAGE: 투자 시그널 ==================== -->
+  <div id="page-signal" class="page">
+
+    <!-- 종합 신호등 배너 -->
+    <div id="signal-banner" style="
+      background: linear-gradient(135deg, rgba(245,166,35,0.08) 0%, rgba(0,214,143,0.05) 100%);
+      border: 1px solid rgba(245,166,35,0.25);
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin-bottom: 16px;
+      display: flex; align-items: center; gap: 24px;
+    ">
+      <div style="text-align:center; min-width:100px">
+        <div id="sig-light" style="
+          width:64px; height:64px; border-radius:50%; margin:0 auto 8px;
+          display:flex; align-items:center; justify-content:center;
+          font-size:28px; font-weight:700;
+          background: rgba(245,166,35,0.2);
+          border: 3px solid var(--amber);
+          box-shadow: 0 0 20px rgba(245,166,35,0.3);
+          font-family: var(--font-data);
+        ">—</div>
+        <div id="sig-label" style="font-size:11px; color:var(--text-muted); letter-spacing:0.5px">신호 계산 중</div>
+      </div>
+      <div style="flex:1">
+        <div style="font-size:13px; font-weight:500; color:var(--text-primary); margin-bottom:6px">
+          매크로 종합 투자 시그널
+        </div>
+        <div id="sig-summary" style="font-size:12px; color:var(--text-secondary); line-height:1.7">
+          금리·유동성·기업이익·대외수지를 종합 스코어링합니다. 데이터 로딩 중...
+        </div>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; min-width:280px">
+        <div style="text-align:center">
+          <div style="font-size:10px; color:var(--text-muted); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.5px">종합 스코어</div>
+          <div id="sig-score" style="font-family:var(--font-data); font-size:28px; font-weight:600; color:var(--amber)">—</div>
+          <div style="font-size:10px; color:var(--text-muted)">/100점</div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-size:10px; color:var(--text-muted); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.5px">전월 대비</div>
+          <div id="sig-score-chg" style="font-family:var(--font-data); font-size:28px; font-weight:600; color:var(--text-muted)">—</div>
+          <div style="font-size:10px; color:var(--text-muted)">점 변화</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4대 카테고리 스코어 카드 -->
+    <div class="grid-4" style="margin-bottom:16px">
+      <div class="kpi-card" id="sig-card-rate">
+        <div class="kpi-label">① 금리·통화정책</div>
+        <div class="kpi-value" id="sig-rate-score" style="font-size:22px">—<span class="kpi-unit">/25</span></div>
+        <div id="sig-rate-bar" class="gauge-bar" style="margin:8px 0"><div class="gauge-fill" style="width:0%;background:var(--amber)"></div></div>
+        <div id="sig-rate-desc" class="kpi-desc">계산 중...</div>
+      </div>
+      <div class="kpi-card" id="sig-card-liq">
+        <div class="kpi-label">② 유동성·통화량</div>
+        <div class="kpi-value" id="sig-liq-score" style="font-size:22px">—<span class="kpi-unit">/25</span></div>
+        <div id="sig-liq-bar" class="gauge-bar" style="margin:8px 0"><div class="gauge-fill" style="width:0%;background:var(--blue)"></div></div>
+        <div id="sig-liq-desc" class="kpi-desc">계산 중...</div>
+      </div>
+      <div class="kpi-card" id="sig-card-biz">
+        <div class="kpi-label">③ 기업이익·수익성</div>
+        <div class="kpi-value" id="sig-biz-score" style="font-size:22px">—<span class="kpi-unit">/25</span></div>
+        <div id="sig-biz-bar" class="gauge-bar" style="margin:8px 0"><div class="gauge-fill" style="width:0%;background:var(--green)"></div></div>
+        <div id="sig-biz-desc" class="kpi-desc">계산 중...</div>
+      </div>
+      <div class="kpi-card" id="sig-card-ext">
+        <div class="kpi-label">④ 대외·경상수지</div>
+        <div class="kpi-value" id="sig-ext-score" style="font-size:22px">—<span class="kpi-unit">/25</span></div>
+        <div id="sig-ext-bar" class="gauge-bar" style="margin:8px 0"><div class="gauge-fill" style="width:0%;background:var(--purple)"></div></div>
+        <div id="sig-ext-desc" class="kpi-desc">계산 중...</div>
+      </div>
+    </div>
+
+    <!-- 장단기 금리차 Recession 시그널 + 유동성 사이클 -->
+    <div class="grid-2">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title"><span class="panel-title-dot"></span> 장단기 금리차 (10Y − 3Y)</div>
+          <span class="badge badge-red" id="sig-inversion-badge">역전 여부 확인 중</span>
+        </div>
+        <div class="panel-body">
+          <div id="chart-sig-spread" class="chart-box-lg"></div>
+          <div style="margin-top:10px; font-size:11px; color:var(--text-muted); line-height:1.7">
+            💡 <strong style="color:var(--text-secondary)">금리 역전(음수) 지속 시 경기침체 선행 신호.</strong> 미국 경험상 역전 후 평균 12~18개월 내 침체 진입. 한국은 역전 폭과 지속 기간이 핵심.
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title"><span class="panel-title-dot"></span> M2 유동성 사이클 & 기준금리</div>
+        </div>
+        <div class="panel-body">
+          <div id="chart-sig-liquidity" class="chart-box-lg"></div>
+          <div style="margin-top:10px; font-size:11px; color:var(--text-muted); line-height:1.7">
+            💡 <strong style="color:var(--text-secondary)">M2 증가율 상승 + 기준금리 인하</strong> = 유동성 확장 사이클. 주식·부동산 자산 상승 압력.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CPI vs 실질금리 + 기업이익 모멘텀 -->
+    <div class="grid-2 mt16">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title"><span class="panel-title-dot"></span> 실질금리 (기준금리 − CPI)</div>
+          <span class="badge badge-blue" id="sig-realrate-badge">—</span>
+        </div>
+        <div class="panel-body">
+          <div id="chart-sig-realrate" class="chart-box"></div>
+          <div style="margin-top:10px; font-size:11px; color:var(--text-muted); line-height:1.7">
+            💡 실질금리 <strong style="color:var(--text-secondary)">마이너스</strong> 구간 = 인플레이션이 금리보다 높음 → 현금 보유 불리, 실물·주식 선호.
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title"><span class="panel-title-dot"></span> 기업이익 모멘텀 스코어</div>
+        </div>
+        <div class="panel-body">
+          <div id="chart-sig-bizmomentum" class="chart-box"></div>
+          <div style="margin-top:10px; font-size:11px; color:var(--text-muted); line-height:1.7">
+            💡 영업이익률·ROE·매출증가율 3개 지표를 정규화하여 합산. <strong style="color:var(--text-secondary)">60점 이상</strong> = 이익 사이클 개선 구간.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 종합 스코어 히스토리 -->
+    <div class="mt16">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title"><span class="panel-title-dot"></span> 매크로 종합 스코어 히스토리</div>
+          <div style="display:flex; gap:12px; align-items:center">
+            <span style="font-size:10px; color:var(--green)">● 매수 우호 (70+)</span>
+            <span style="font-size:10px; color:var(--amber)">● 중립 (40~70)</span>
+            <span style="font-size:10px; color:var(--red)">● 매수 비우호 (~40)</span>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div id="chart-sig-history" class="chart-box-lg"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 세부 지표 테이블 -->
+    <div class="mt16">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title"><span class="panel-title-dot"></span> 투자 시그널 세부 근거</div>
+        </div>
+        <div class="panel-body" style="padding:12px">
+          <table class="data-table" id="signal-detail-table">
+            <thead>
+              <tr>
+                <th>카테고리</th><th>지표</th><th>현재값</th>
+                <th>임계값</th><th>상태</th><th>점수</th>
+              </tr>
+            </thead>
+            <tbody id="signal-table-body">
+              <tr><td colspan="6" style="color:var(--text-muted);text-align:center;padding:20px">데이터 로딩 중...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="insight-card mt16" id="signal-insight">투자 시그널 종합 분석 중...</div>
+  </div>
+
+</main>
+
+<script>
+/* ============================================================
+   DATA STORE
+============================================================ */
+const Store = {
+  biz:   null,
+  rates: null,
+  fof:   null,
+  bop:   null,
+  trade: null,
+  forex: null,
+  macro: null,
+  money: null,
+  ready: { biz:false, rates:false, fof:false, bop:false, trade:false, forex:false, macro:false, money:false }
+};
+
+const BASE_PATH = './data/';
+
+async function loadJSON(name) {
+  try {
+    const res = await fetch(`${BASE_PATH}${name}.json?t=${Date.now()}`);
+    return await res.json();
+  } catch (e) {
+    console.error(`Failed to load ${name}.json`, e);
+    return null;
+  }
+}
+
+/* ============================================================
+   INIT
+============================================================ */
+async function init() {
+  const [biz, rates, fof, bop, trade, forex, macro, money] = await Promise.all([
+    loadJSON('biz_analysis'),
+    loadJSON('rates'),
+    loadJSON('flow_of_funds'),
+    loadJSON('bop'),
+    loadJSON('trade'),
+    loadJSON('forex'),
+    loadJSON('macro'),
+    loadJSON('money')
+  ]);
+
+  if (biz)   { Store.biz   = biz;   Store.ready.biz   = true; }
+  if (rates) { Store.rates = rates; Store.ready.rates = true; }
+  if (fof)   { Store.fof   = fof;   Store.ready.fof   = true; }
+  if (bop)   { Store.bop   = bop;   Store.ready.bop   = true; }
+  if (trade) { Store.trade = trade; Store.ready.trade = true; }
+  if (forex) { Store.forex = forex; Store.ready.forex = true; }
+  if (macro) { Store.macro = macro; Store.ready.macro = true; }
+  if (money) { Store.money = money; Store.ready.money = true; }
+
+  const ts = biz?.updated || rates?.updated;
+  if (ts) {
+    const d = new Date(ts);
+    document.getElementById('last-updated').textContent =
+      `업데이트: ${d.toLocaleDateString('ko-KR')} ${d.toLocaleTimeString('ko-KR', {hour:'2-digit', minute:'2-digit'})}`;
+  }
+  renderAll();
+}
+
+function renderAll() {
+  if (Store.ready.biz)   renderBizPage();
+  if (Store.ready.rates) renderRates();
+  if (Store.ready.fof)   renderFofPage();
+  if (Store.ready.bop && Store.ready.trade && Store.ready.forex) renderExternalPage();
+  if (Store.ready.rates && Store.ready.macro && Store.ready.money &&
+      Store.ready.biz   && Store.ready.bop) renderSignalPage();
+  renderOverviewCharts();
+}
+
+/* ============================================================
+   UTILITIES
+============================================================ */
+function getLatest(arr) {
+  if (!arr || !arr.length) return null;
+  return arr[arr.length - 1];
+}
+function getPrev(arr) {
+  if (!arr || arr.length < 2) return null;
+  return arr[arr.length - 2];
+}
+function fmt(v, dec=1) {
+  if (v == null) return '—';
+  return parseFloat(v).toFixed(dec);
+}
+function chgStr(curr, prev) {
+  if (!curr || !prev) return { str: '—', cls: 'flat' };
+  const d = parseFloat(curr.DATA_VALUE) - parseFloat(prev.DATA_VALUE);
+  const sign = d > 0 ? '+' : '';
+  const cls  = d > 0 ? 'up' : d < 0 ? 'down' : 'flat';
+  return { str: `${sign}${d.toFixed(2)}`, cls };
+}
+function ecPalette(n) {
+  const colors = ['#f5a623','#00d68f','#4d9fff','#a78bfa','#ff4757','#00b4d8'];
+  return colors.slice(0, n);
+}
+
+/* ============================================================
+   CHART DEFAULTS
+============================================================ */
+function baseOption() {
+  return {
+    backgroundColor: 'transparent',
+    textStyle: { fontFamily: "'IBM Plex Mono', monospace", fontSize: 11 },
+    tooltip: {
+      trigger: 'axis',
+      backgroundColor: '#1a2030',
+      borderColor: '#2a3445',
+      textStyle: { color: '#e8edf5', fontSize: 11 },
+      axisPointer: { type: 'cross', lineStyle: { color: '#2a3445' } }
+    },
+    grid: { top: 24, right: 16, bottom: 40, left: 52, containLabel: false },
+    xAxis: {
+      type: 'category',
+      axisLabel: { color: '#4a5568', fontSize: 10 },
+      axisLine: { lineStyle: { color: '#1e2533' } },
+      splitLine: { show: false }
+    },
+    yAxis: {
+      type: 'value',
+      axisLabel: { color: '#4a5568', fontSize: 10 },
+      axisLine: { show: false },
+      splitLine: { lineStyle: { color: '#1e2533', type: 'dashed' } }
+    }
+  };
+}
+
+function initChart(id) {
+  const el = document.getElementById(id);
+  if (!el) return null;
+  let c = echarts.getInstanceByDom(el);
+  if (c) c.dispose();
+  return echarts.init(el, null, { renderer: 'canvas' });
+}
+
+/* ============================================================
+   BIZ PAGE — 기업수익성
+============================================================ */
+let currentBizMetric = 'op_margin';
+let currentSizeMetric = 'op_margin';
+
+const BIZ_LABELS = {
+  op_margin:  '영업이익률(%)',
+  net_margin: '순이익률(%)',
+  roe:        'ROE(%)',
+  roa:        'ROA(%)',
+  debt_ratio: '부채비율(%)',
+  sales_growth: '매출액증가율(%)',
+  interest_cov: '이자보상배율(배)'
+};
+
+function renderBizPage() {
+  const d = Store.biz.data;
+  const mfg = d.manufacturing;
+
+  // KPI Strip
+  const setKpi = (id, arr, dec=1) => {
+    const l = getLatest(arr);
+    if (l) {
+      const el = document.getElementById(id);
+      if (el) el.textContent = `${fmt(parseFloat(l.DATA_VALUE), dec)}%`;
+      const yr = document.getElementById(id+'-yr');
+      if (yr) yr.textContent = `${l.TIME}년 기준`;
+    }
+  };
+  setKpi('biz-opm',  mfg.op_margin);
+  setKpi('biz-roe',  mfg.roe);
+  setKpi('biz-roa',  mfg.roa);
+  setKpi('biz-debt', mfg.debt_ratio);
+
+  const icrLatest = getLatest(mfg.interest_cov);
+  if (icrLatest) {
+    document.getElementById('biz-icr').textContent = `${fmt(parseFloat(icrLatest.DATA_VALUE))}배`;
+  }
+  const sgLatest = getLatest(mfg.sales_growth);
+  if (sgLatest) {
+    const val = parseFloat(sgLatest.DATA_VALUE);
+    const el = document.getElementById('biz-sg');
+    el.textContent = `${val>=0?'+':''}${fmt(val)}%`;
+    el.className = 'metric-cell-val ' + (val>=0?'up':'down');
+  }
+
+  // Ticker bar
+  ['opm','roe','debt','icr'].forEach(k => {
+    const map = { opm: mfg.op_margin, roe: mfg.roe, debt: mfg.debt_ratio, icr: mfg.interest_cov };
+    const l = getLatest(map[k]);
+    const el = document.getElementById(`t-${k}`);
+    if (l && el) el.textContent = fmt(parseFloat(l.DATA_VALUE));
+  });
+
+  // Render charts
+  renderBizMain(mfg, currentBizMetric);
+  renderBizRadar(mfg);
+  renderBizTable(mfg);
+  renderMfgVsNmfg(d);
+  renderSizeChart(d.by_size, 'op_margin');
+  renderDebtChart(mfg);
+  renderIcrChart(mfg);
+  renderBizInsight(mfg);
+}
+
+function renderBizMain(mfg, metric) {
+  const c = initChart('chart-biz-main');
+  if (!c) return;
+  const arr = mfg[metric] || [];
+  const years = arr.map(r => r.TIME);
+  const vals  = arr.map(r => parseFloat(r.DATA_VALUE));
+  const avg   = vals.reduce((a,b)=>a+b,0)/vals.length;
+
+  const opt = baseOption();
+  opt.grid = { top: 30, right: 20, bottom: 40, left: 55 };
+  opt.xAxis.data = years;
+  opt.yAxis.name = BIZ_LABELS[metric] || metric;
+  opt.yAxis.nameTextStyle = { color: '#4a5568', fontSize: 10 };
+  opt.series = [
+    {
+      name: BIZ_LABELS[metric] || metric,
+      type: 'line',
+      data: vals,
+      smooth: 0.3,
+      symbol: 'circle', symbolSize: 5,
+      lineStyle: { color: '#f5a623', width: 2 },
+      itemStyle: { color: '#f5a623' },
+      areaStyle: {
+        color: new echarts.graphic.LinearGradient(0,0,0,1,[
+          { offset:0, color:'rgba(245,166,35,0.25)' },
+          { offset:1, color:'rgba(245,166,35,0.01)' }
+        ])
+      },
+      markLine: {
+        silent: true,
+        data: [{ yAxis: avg, name:'평균' }],
+        lineStyle: { color: '#4a5568', type: 'dashed', width: 1 },
+        label: { formatter: `평균 ${avg.toFixed(1)}`, color: '#4a5568', fontSize: 10 }
+      },
+      markPoint: {
+        data: [
+          { type: 'max', name: '최고', itemStyle: { color: '#00d68f' } },
+          { type: 'min', name: '최저', itemStyle: { color: '#ff4757' } }
+        ],
+        symbolSize: 32,
+        label: { fontSize: 9 }
+      }
+    }
+  ];
+  opt.tooltip.formatter = params => {
+    const p = params[0];
+    return `<b>${p.axisValue}년</b><br/>${BIZ_LABELS[metric]}: <b style="color:#f5a623">${p.value.toFixed(2)}</b>`;
+  };
+  c.setOption(opt);
+}
+
+function renderBizRadar(mfg) {
+  const c = initChart('chart-biz-radar');
+  if (!c) return;
+
+  const latest = (arr) => arr.length ? parseFloat(arr[arr.length-1].DATA_VALUE) : 0;
+  const opm  = latest(mfg.op_margin);
+  const roe  = latest(mfg.roe);
+  const roa  = latest(mfg.roa);
+  const nm   = latest(mfg.net_margin);
+  const icr  = Math.min(latest(mfg.interest_cov), 10);
+  const debt = latest(mfg.debt_ratio);
+  const debtScore = Math.max(0, 100 - debt);
+
+  c.setOption({
+    backgroundColor: 'transparent',
+    tooltip: { backgroundColor:'#1a2030', borderColor:'#2a3445', textStyle:{color:'#e8edf5'} },
+    radar: {
+      indicator: [
+        { name:'영업이익률', max:10 },
+        { name:'ROE',        max:15 },
+        { name:'ROA',        max:8  },
+        { name:'순이익률',   max:8  },
+        { name:'이자보상',   max:10 },
+        { name:'재무안정',   max:50 }
+      ],
+      axisLine: { lineStyle: { color:'#2a3445' } },
+      splitLine: { lineStyle: { color:'#1e2533' } },
+      splitArea: { areaStyle: { color:['rgba(14,18,24,0.5)','rgba(14,18,24,0.2)'] } },
+      name: { textStyle: { color:'#8899b0', fontSize:10 } }
+    },
+    series: [{
+      type: 'radar',
+      data: [{ value:[opm,roe,roa,nm,icr,debtScore], name:'현재' }],
+      lineStyle: { color:'#f5a623', width:2 },
+      areaStyle: { color:'rgba(245,166,35,0.15)' },
+      itemStyle: { color:'#f5a623' }
+    }]
+  });
+}
+
+function renderBizTable(mfg) {
+  const metrics = [
+    { key:'op_margin',    label:'영업이익률', unit:'%' },
+    { key:'net_margin',   label:'순이익률',   unit:'%' },
+    { key:'roe',          label:'ROE',        unit:'%' },
+    { key:'roa',          label:'ROA',        unit:'%' },
+    { key:'debt_ratio',   label:'부채비율',   unit:'%' },
+    { key:'interest_cov', label:'이자보상배율', unit:'배' },
+    { key:'sales_growth', label:'매출증가율', unit:'%' }
+  ];
+  const tb = document.getElementById('biz-table-body');
+  if (!tb) return;
+
+  const trend = (curr, prev) => {
+    if (!curr || !prev) return '—';
+    const d = curr - prev;
+    return d > 0 ? `<span class="up">▲ ${d.toFixed(2)}</span>` : d < 0 ? `<span class="down">▼ ${Math.abs(d).toFixed(2)}</span>` : '━';
+  };
+
+  tb.innerHTML = metrics.map(m => {
+    const arr = mfg[m.key] || [];
+    const l = getLatest(arr);
+    const p = getPrev(arr);
+    if (!l) return '';
+    const cv = parseFloat(l.DATA_VALUE);
+    const pv = p ? parseFloat(p.DATA_VALUE) : null;
+    const isGood = (m.key === 'debt_ratio') ? cv < 100 : cv > 0;
+    return `<tr>
+      <td class="label">${m.label}</td>
+      <td class="num ${cv<0?'neg':'pos'}">${fmt(cv)}${m.unit}</td>
+      <td class="num">${pv!=null?fmt(pv)+''+m.unit:'—'}</td>
+      <td class="num">${trend(cv,pv)}</td>
+    </tr>`;
+  }).join('');
+}
+
+function renderMfgVsNmfg(d) {
+  const c = initChart('chart-mfg-vs-nmfg');
+  if (!c) return;
+  const mfg  = d.manufacturing.op_margin;
+  const nmfg = d.non_manufacturing.op_margin;
+  const years = mfg.map(r=>r.TIME);
+
+  const opt = baseOption();
+  opt.legend = {
+    data:['제조업','비제조업'],
+    textStyle:{color:'#8899b0',fontSize:10},
+    bottom:0, left:'center'
+  };
+  opt.grid = { top:30, right:20, bottom:50, left:50 };
+  opt.xAxis.data = years;
+  opt.series = [
+    {
+      name:'제조업', type:'line', data:mfg.map(r=>parseFloat(r.DATA_VALUE)),
+      smooth:0.3, symbol:'circle', symbolSize:4,
+      lineStyle:{color:'#f5a623',width:2}, itemStyle:{color:'#f5a623'},
+      areaStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[
+        {offset:0,color:'rgba(245,166,35,0.2)'},{offset:1,color:'rgba(245,166,35,0)'}
+      ])}
+    },
+    {
+      name:'비제조업', type:'line', data:nmfg.map(r=>parseFloat(r.DATA_VALUE)),
+      smooth:0.3, symbol:'circle', symbolSize:4,
+      lineStyle:{color:'#4d9fff',width:2}, itemStyle:{color:'#4d9fff'},
+      areaStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[
+        {offset:0,color:'rgba(77,159,255,0.15)'},{offset:1,color:'rgba(77,159,255,0)'}
+      ])}
+    }
+  ];
+  opt.tooltip.formatter = p => {
+    return `<b>${p[0].axisValue}년</b><br/>
+      ${p.map(s=>`${s.seriesName}: <b style="color:${s.color}">${s.value.toFixed(2)}%</b>`).join('<br/>')}`;
+  };
+  c.setOption(opt);
+}
+
+function renderSizeChart(by_size, metric) {
+  const c = initChart('chart-size');
+  if (!c) return;
+  const largeKey = `large_${metric}`;
+  const smeKey   = `sme_${metric}`;
+  const large = by_size[largeKey] || [];
+  const sme   = by_size[smeKey]   || [];
+  const years = large.map(r=>r.TIME);
+
+  const opt = baseOption();
+  opt.legend = { data:['대기업','중소기업'], textStyle:{color:'#8899b0',fontSize:10}, bottom:0, left:'center' };
+  opt.grid = { top:30, right:20, bottom:50, left:50 };
+  opt.xAxis.data = years;
+  opt.series = [
+    {
+      name:'대기업', type:'bar', data:large.map(r=>parseFloat(r.DATA_VALUE)),
+      itemStyle:{color:'rgba(245,166,35,0.8)'},
+      barMaxWidth:30
+    },
+    {
+      name:'중소기업', type:'bar', data:sme.map(r=>parseFloat(r.DATA_VALUE)),
+      itemStyle:{color:'rgba(77,159,255,0.7)'},
+      barMaxWidth:30
+    }
+  ];
+  c.setOption(opt);
+}
+
+function renderDebtChart(mfg) {
+  const c = initChart('chart-debt');
+  if (!c) return;
+  const arr = mfg.debt_ratio;
+
+  const opt = baseOption();
+  opt.grid = { top:20, right:20, bottom:35, left:55 };
+  opt.xAxis.data = arr.map(r=>r.TIME);
+  opt.series = [{
+    type:'line', data:arr.map(r=>parseFloat(r.DATA_VALUE)),
+    smooth:0.3, symbol:'none',
+    lineStyle:{color:'#ff4757',width:2},
+    areaStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[
+      {offset:0,color:'rgba(255,71,87,0.2)'},{offset:1,color:'rgba(255,71,87,0)'}
+    ])},
+    markLine:{
+      silent:true,
+      data:[{yAxis:100,name:'100% 기준'}],
+      lineStyle:{color:'#8899b0',type:'dashed'},
+      label:{formatter:'100%',color:'#8899b0',fontSize:10}
+    }
+  }];
+  c.setOption(opt);
+}
+
+function renderIcrChart(mfg) {
+  const c = initChart('chart-icr');
+  if (!c) return;
+  const icr = mfg.interest_cov;
+  const sg  = mfg.sales_growth;
+
+  const opt = baseOption();
+  opt.grid = { top:30, right:55, bottom:35, left:45 };
+  opt.legend = { data:['이자보상배율','매출증가율'], textStyle:{color:'#8899b0',fontSize:10}, top:2, right:0 };
+  opt.xAxis.data = icr.map(r=>r.TIME);
+  opt.yAxis = [
+    { type:'value', axisLabel:{color:'#4a5568',fontSize:10}, splitLine:{lineStyle:{color:'#1e2533',type:'dashed'}} },
+    { type:'value', axisLabel:{color:'#4a5568',fontSize:10}, splitLine:{show:false} }
+  ];
+  opt.series = [
+    {
+      name:'이자보상배율', type:'line', yAxisIndex:0,
+      data:icr.map(r=>parseFloat(r.DATA_VALUE)),
+      smooth:0.3, symbol:'circle', symbolSize:4,
+      lineStyle:{color:'#f5a623',width:2}, itemStyle:{color:'#f5a623'},
+      markLine:{
+        silent:true,
+        data:[{yAxis:1,name:'위험선'}],
+        lineStyle:{color:'#ff4757',type:'dashed',width:1},
+        label:{formatter:'위험선 1배',color:'#ff4757',fontSize:9}
+      }
+    },
+    {
+      name:'매출증가율', type:'bar', yAxisIndex:1,
+      data:sg.map(r=>parseFloat(r.DATA_VALUE)),
+      itemStyle:{
+        color: (p) => p.value >= 0 ? 'rgba(0,214,143,0.5)' : 'rgba(255,71,87,0.5)'
+      },
+      barMaxWidth:24
+    }
+  ];
+  c.setOption(opt);
+}
+
+function renderBizInsight(mfg) {
+  const el = document.getElementById('biz-insight');
+  if (!el) return;
+
+  const opm  = parseFloat(getLatest(mfg.op_margin)?.DATA_VALUE || 0);
+  const roe  = parseFloat(getLatest(mfg.roe)?.DATA_VALUE || 0);
+  const icr  = parseFloat(getLatest(mfg.interest_cov)?.DATA_VALUE || 0);
+  const debt = parseFloat(getLatest(mfg.debt_ratio)?.DATA_VALUE || 0);
+  const sg   = parseFloat(getLatest(mfg.sales_growth)?.DATA_VALUE || 0);
+
+  const yr   = getLatest(mfg.op_margin)?.TIME;
+
+  const points = [];
+  if (opm < 4) points.push(`<strong>${yr}년 영업이익률 ${opm.toFixed(1)}%</strong> — 수익성 압박 구간. 원가 또는 금리 상승 영향 점검 필요.`);
+  else points.push(`<strong>${yr}년 영업이익률 ${opm.toFixed(1)}%</strong> — 안정적 수익 창출 구간.`);
+
+  if (roe < 7) points.push(`ROE ${roe.toFixed(1)}% — 자본 효율성 저하. 자본 재배치 또는 주주환원 전략 점검 시점.`);
+  else points.push(`ROE ${roe.toFixed(1)}% — 자본 활용도 양호.`);
+
+  if (icr < 3) points.push(`이자보상배율 ${icr.toFixed(1)}배 — <strong style="color:#ff4757">금리 부담 경계.</strong> 1배 미만 기업 비중 증가 리스크.`);
+  if (sg < 0)  points.push(`매출액 증가율 ${sg.toFixed(1)}% — <strong style="color:#ff4757">역성장 구간.</strong> 글로벌 수요 둔화 또는 수출 감소 영향.`);
+  else if (sg > 10) points.push(`매출액 증가율 +${sg.toFixed(1)}% — 강한 탑라인 성장. 수익성 레버리지 기회.`);
+
+  el.innerHTML = `<strong>📊 기업수익성 인사이트</strong> (한국은행 기업경영분석 기준)<br/><br/>` + points.join('<br/>');
+}
+
+/* ============================================================
+   RATES CHARTS
+============================================================ */
+function renderRates() {
+  if (!Store.rates?.data) return;
+  const d = Store.rates.data;
+
+  // Ticker
+  const br = getLatest(d.base_rate);
+  const b3 = getLatest(d.bond_3y);
+  const b10 = getLatest(d.bond_10y);
+  if (br)  document.getElementById('t-baserate').textContent = fmt(parseFloat(br.DATA_VALUE));
+  if (b3)  document.getElementById('t-bond3y').textContent   = fmt(parseFloat(b3.DATA_VALUE));
+  if (b10) document.getElementById('t-bond10y').textContent  = fmt(parseFloat(b10.DATA_VALUE));
+
+  // Overview KPIs
+  if (br)  document.getElementById('ov-baserate').innerHTML = `${fmt(parseFloat(br.DATA_VALUE))}<span class="kpi-unit">%</span>`;
+  if (b3 && b10) {
+    const sp = (parseFloat(b10.DATA_VALUE) - parseFloat(b3.DATA_VALUE)) * 100;
+    document.getElementById('ov-bond').innerHTML   = `${fmt(parseFloat(b3.DATA_VALUE))}<span class="kpi-unit">%</span>`;
+    document.getElementById('ov-spread').textContent = `장단기 스프레드 ${sp.toFixed(0)}bp`;
+  }
+}
+
+/* ============================================================
+   CONTROLS
+============================================================ */
+function switchTab(tab) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(`page-${tab}`).classList.add('active');
+  document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+
+  setTimeout(() => {
+    if (tab === 'overview') renderOverviewCharts();
+    if (tab === 'funds'    && Store.ready.fof)   renderFofPage();
+    if (tab === 'external' && Store.ready.bop && Store.ready.trade && Store.ready.forex) renderExternalPage();
+    if (tab === 'signal'   && Store.ready.rates && Store.ready.macro && Store.ready.money && Store.ready.biz && Store.ready.bop) renderSignalPage();
+    window.dispatchEvent(new Event('resize'));
+  }, 50);
+}
+
+function setBizMetric(metric, btn) {
+  currentBizMetric = metric;
+  document.querySelectorAll('[id^="bm-"]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (Store.biz?.data) renderBizMain(Store.biz.data.manufacturing, metric);
+}
+
+function setSizeMetric(metric, btn) {
+  document.querySelectorAll('.panel-controls .ctrl-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (Store.biz?.data) renderSizeChart(Store.biz.data.by_size, metric);
+}
+
+function setRatePeriod(period, btn) {
+  document.querySelectorAll('.panel-controls .ctrl-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+/* ============================================================
+   PHASE 2A — 자금순환 (Flow of Funds)
+============================================================ */
+function renderFofPage() {
+  const d = Store.fof.data;
+
+  // KPI Strip
+  const setFof = (id, arr) => {
+    const l = getLatest(arr);
+    if (l) document.getElementById(id).textContent = `${parseFloat(l.DATA_VALUE).toFixed(1)}조`;
+  };
+  setFof('fof-hh',   d.household);
+  setFof('fof-corp', d.corporate);
+  setFof('fof-gov',  d.government);
+  setFof('fof-fin',  d.financial);
+
+  const extLatest = getLatest(d.external);
+  if (extLatest) {
+    const v = parseFloat(extLatest.DATA_VALUE);
+    const el = document.getElementById('fof-ext');
+    el.textContent = `${v >= 0 ? '+' : ''}${v.toFixed(1)}조`;
+    el.className   = 'metric-cell-val ' + (v >= 0 ? 'up' : 'down');
+  }
+
+  renderSankey(d.sankey_latest);
+  renderFofTrend(d);
+  renderFofExt(d.external);
+  renderHhAssets(d.hh_assets_breakdown);
+  renderCorpLiab(d.corp_liabilities_breakdown);
+  renderFofInsight(d);
+}
+
+function renderSankey(sk) {
+  const c = initChart('chart-sankey');
+  if (!c || !sk) return;
+  document.getElementById('fof-sankey-year').textContent = `${sk.year}년 기준`;
+
+  const nodeColors = ['#f5a623','#4d9fff','#a78bfa','#00d68f','#ff9f43',
+                      '#74b9ff','#55efc4','#fd79a8','#fdcb6e','#e17055'];
+
+  c.setOption({
+    backgroundColor: 'transparent',
+    tooltip: {
+      trigger: 'item',
+      formatter: p => {
+        if (p.dataType === 'edge') {
+          return `${p.data.label || ''}<br/><b style="color:${p.color}">${p.data.value.toFixed(1)} 조원</b>`;
+        }
+        return `<b>${p.name}</b>`;
+      },
+      backgroundColor: '#1a2030', borderColor: '#2a3445',
+      textStyle: { color: '#e8edf5', fontSize: 11 }
+    },
+    series: [{
+      type: 'sankey',
+      layout: 'none',
+      emphasis: { focus: 'adjacency' },
+      nodeAlign: 'left',
+      data: sk.nodes.map((n, i) => ({
+        name: n.name,
+        itemStyle: { color: nodeColors[i % nodeColors.length], borderColor: nodeColors[i % nodeColors.length] }
+      })),
+      links: sk.links.map(l => ({
+        source: sk.nodes[l.source].name,
+        target: sk.nodes[l.target].name,
+        value:  l.value,
+        label:  l.label
+      })),
+      lineStyle: { color: 'gradient', opacity: 0.35, curveness: 0.5 },
+      label: {
+        color: '#e8edf5', fontSize: 11,
+        fontFamily: "'Noto Sans KR', sans-serif"
+      },
+      nodeWidth: 14, nodeGap: 12,
+      left: '5%', right: '5%', top: '5%', bottom: '5%'
+    }]
+  });
+}
+
+function renderFofTrend(d) {
+  const c = initChart('chart-fof-trend');
+  if (!c) return;
+  const years = d.household.map(r => r.TIME);
+  const opt = baseOption();
+  opt.legend = { data:['가계','기업','정부','금융기관'], textStyle:{color:'#8899b0',fontSize:9}, bottom:0 };
+  opt.grid = { top:20, right:10, bottom:50, left:52 };
+  opt.xAxis.data = years;
+  const series = [
+    { name:'가계',     data: d.household.map(r=>parseFloat(r.DATA_VALUE)),  color:'#f5a623' },
+    { name:'기업',     data: d.corporate.map(r=>parseFloat(r.DATA_VALUE)),  color:'#4d9fff' },
+    { name:'정부',     data: d.government.map(r=>parseFloat(r.DATA_VALUE)), color:'#a78bfa' },
+    { name:'금융기관', data: d.financial.map(r=>parseFloat(r.DATA_VALUE)),  color:'#00d68f' }
+  ];
+  opt.series = series.map(s => ({
+    name: s.name, type: 'line', data: s.data, smooth: 0.3, symbol: 'none',
+    lineStyle: { color: s.color, width: 1.5 },
+    itemStyle: { color: s.color }
+  }));
+  c.setOption(opt);
+}
+
+function renderFofExt(arr) {
+  const c = initChart('chart-fof-ext');
+  if (!c) return;
+  const opt = baseOption();
+  opt.grid = { top:10, right:10, bottom:35, left:52 };
+  opt.xAxis.data = arr.map(r => r.TIME);
+  opt.series = [{
+    type: 'bar',
+    data: arr.map(r => parseFloat(r.DATA_VALUE)),
+    itemStyle: {
+      color: p => p.value >= 0 ? 'rgba(0,214,143,0.65)' : 'rgba(255,71,87,0.65)'
+    },
+    barMaxWidth: 28
+  }];
+  opt.yAxis.splitLine = { lineStyle: { color: '#1e2533', type: 'dashed' } };
+  opt.series[0].markLine = {
+    silent: true,
+    data: [{ yAxis: 0 }],
+    lineStyle: { color: '#4a5568', width: 1 },
+    label: { show: false }
+  };
+  c.setOption(opt);
+}
+
+function renderHhAssets(d) {
+  const c = initChart('chart-hh-assets');
+  if (!c) return;
+  const opt = baseOption();
+  opt.legend = {
+    data: ['예금','보험·연금','주식·펀드','채권','기타펀드'],
+    textStyle: { color: '#8899b0', fontSize: 10 }, bottom: 0
+  };
+  opt.grid = { top: 30, right: 20, bottom: 50, left: 52 };
+  opt.xAxis.data = d.years;
+  const items = [
+    { name: '예금',      data: d.deposit,    color: '#4d9fff' },
+    { name: '보험·연금', data: d.insurance,  color: '#a78bfa' },
+    { name: '주식·펀드', data: d.stocks,     color: '#f5a623' },
+    { name: '채권',      data: d.bonds,      color: '#00d68f' },
+    { name: '기타펀드',  data: d.funds,      color: '#ff9f43' }
+  ];
+  opt.series = items.map(it => ({
+    name: it.name, type: 'bar', stack: 'total', data: it.data,
+    itemStyle: { color: it.color }, barMaxWidth: 40
+  }));
+  c.setOption(opt);
+}
+
+function renderCorpLiab(d) {
+  const c = initChart('chart-corp-liab');
+  if (!c) return;
+  const opt = baseOption();
+  opt.legend = {
+    data: ['은행대출','회사채','자기자본'],
+    textStyle: { color: '#8899b0', fontSize: 10 }, bottom: 0
+  };
+  opt.grid = { top: 30, right: 20, bottom: 50, left: 52 };
+  opt.xAxis.data = d.years;
+  opt.series = [
+    { name:'은행대출', type:'bar', stack:'total', data: d.bank_loan, itemStyle:{color:'#ff4757'}, barMaxWidth:40 },
+    { name:'회사채',   type:'bar', stack:'total', data: d.bonds,     itemStyle:{color:'#f5a623'}, barMaxWidth:40 },
+    { name:'자기자본', type:'bar', stack:'total', data: d.equity,    itemStyle:{color:'#00d68f'}, barMaxWidth:40 }
+  ];
+  c.setOption(opt);
+}
+
+function renderFofInsight(d) {
+  const el = document.getElementById('fof-insight');
+  if (!el) return;
+  const hhLatest  = parseFloat(getLatest(d.household)?.DATA_VALUE || 0);
+  const extLatest = parseFloat(getLatest(d.external)?.DATA_VALUE || 0);
+  const extPrev   = parseFloat(getPrev(d.external)?.DATA_VALUE   || 0);
+  const extChg    = extLatest - extPrev;
+
+  const lines = [];
+  lines.push(`<strong>가계</strong>는 최신년도 <strong>${hhLatest.toFixed(1)}조원</strong>의 금융자산을 순취득 — 예금 비중 높고, 주식·펀드는 시장 변동에 민감하게 반응.`);
+  if (extLatest < 0)
+    lines.push(`해외 부문 자금 <strong style="color:#ff4757">${extLatest.toFixed(1)}조원 순유출</strong> — 외국인 자금 이탈 또는 내국인 해외 투자 확대.`);
+  else
+    lines.push(`해외 부문 <strong style="color:#00d68f">+${extLatest.toFixed(1)}조원 순유입</strong> — 외국인의 한국 자산 매수 우위.`);
+
+  if (extChg < -10)
+    lines.push(`전년 대비 해외 순유입 ${extChg.toFixed(1)}조원 감소 — 경상수지 및 외국인 투자 동향과 교차 확인 필요.`);
+
+  el.innerHTML = `<strong>📊 자금순환 인사이트</strong> (한국은행 자금순환표 기준)<br/><br/>` + lines.join('<br/>');
+}
+
+/* ============================================================
+   PHASE 2B — 대외자금흐름 (External Capital Flows)
+============================================================ */
+let currentBopView = 'stack';
+let currentFxPair  = 'usd';
+let currentExportView = 'bar';
+
+function renderExternalPage() {
+  const bop   = Store.bop.data;
+  const trade = Store.trade.data;
+  const forex = Store.forex.data;
+
+  // KPI Strip
+  const caLatest  = getLatest(bop.current_account);
+  const gLatest   = getLatest(bop.goods);
+  const sLatest   = getLatest(bop.services);
+  const exLatest  = getLatest(trade.exports);
+  const imLatest  = getLatest(trade.imports);
+  const usdLatest = getLatest(forex.usd_krw);
+
+  if (caLatest)  document.getElementById('ext-ca').textContent      = `${parseFloat(caLatest.DATA_VALUE).toFixed(1)}억$`;
+  if (gLatest)   document.getElementById('ext-goods').textContent   = `${parseFloat(gLatest.DATA_VALUE).toFixed(1)}억$`;
+  if (sLatest) {
+    const v = parseFloat(sLatest.DATA_VALUE);
+    const el = document.getElementById('ext-services');
+    el.textContent  = `${v.toFixed(1)}억$`;
+    el.className    = 'metric-cell-val ' + (v >= 0 ? 'up' : 'down');
+  }
+  if (exLatest)  document.getElementById('ext-exports').textContent = `${parseFloat(exLatest.DATA_VALUE).toFixed(0)}억$`;
+  if (exLatest && imLatest) {
+    const bal = parseFloat(exLatest.DATA_VALUE) - parseFloat(imLatest.DATA_VALUE);
+    const el  = document.getElementById('ext-trade-balance');
+    el.textContent = `${bal >= 0 ? '+' : ''}${bal.toFixed(0)}억$`;
+    el.className   = 'metric-cell-val ' + (bal >= 0 ? 'up' : 'down');
+  }
+  if (usdLatest) document.getElementById('ext-usd').textContent     = `${parseFloat(usdLatest.DATA_VALUE).toFixed(0)}원`;
+
+  // Render charts
+  renderBopDecomp(bop, 'stack');
+  renderFxChart(forex, 'usd');
+  renderTradeChart(trade);
+  renderExportProduct(trade.by_product, 'bar');
+  renderExportRegion(trade.by_region);
+  renderExtCombo(bop, trade, forex);
+  renderExtInsight(bop, trade, forex);
+}
+
+function renderBopDecomp(bop, viewType) {
+  const c = initChart('chart-bop-decomp');
+  if (!c) return;
+  const months = bop.current_account.map(r => r.TIME.replace(/(\d{4})(\d{2})/, '$1.$2'));
+  const ca   = bop.current_account.map(r => parseFloat(r.DATA_VALUE));
+  const good = bop.goods.map(r => parseFloat(r.DATA_VALUE));
+  const svc  = bop.services.map(r => parseFloat(r.DATA_VALUE));
+  const fin  = bop.financial.map(r => parseFloat(r.DATA_VALUE));
+
+  const opt = baseOption();
+  opt.legend = { data:['경상수지','상품수지','서비스수지','금융계정'], textStyle:{color:'#8899b0',fontSize:10}, bottom:0 };
+  opt.grid   = { top:30, right:20, bottom:50, left:55 };
+  opt.xAxis.data = months;
+  opt.xAxis.axisLabel = { color:'#4a5568', fontSize:9, interval: 5 };
+
+  if (viewType === 'stack') {
+    opt.series = [
+      { name:'상품수지',   type:'bar', stack:'bop', data: good, barMaxWidth:20, itemStyle:{color:'rgba(0,214,143,0.7)'} },
+      { name:'서비스수지', type:'bar', stack:'bop', data: svc,  barMaxWidth:20, itemStyle:{color:'rgba(255,71,87,0.6)'} },
+      { name:'금융계정',   type:'bar', stack:'bop', data: fin,  barMaxWidth:20, itemStyle:{color:'rgba(77,159,255,0.6)'} },
+      { name:'경상수지',   type:'line', data: ca, smooth:0.3, symbol:'none', z:5,
+        lineStyle:{color:'#f5a623',width:2.5}, itemStyle:{color:'#f5a623'} }
+    ];
+  } else {
+    opt.series = [
+      { name:'경상수지',   type:'line', data:ca,   smooth:0.3, symbol:'none', lineStyle:{color:'#f5a623',width:2} },
+      { name:'상품수지',   type:'line', data:good, smooth:0.3, symbol:'none', lineStyle:{color:'#00d68f',width:1.5} },
+      { name:'서비스수지', type:'line', data:svc,  smooth:0.3, symbol:'none', lineStyle:{color:'#ff4757',width:1.5} },
+      { name:'금융계정',   type:'line', data:fin,  smooth:0.3, symbol:'none', lineStyle:{color:'#4d9fff',width:1.5} }
+    ];
+  }
+  opt.series.forEach(s => { if (!s.itemStyle) s.itemStyle = {}; });
+  c.setOption(opt);
+}
+
+function renderFxChart(forex, pair) {
+  const c = initChart('chart-fx');
+  if (!c) return;
+  const opt = baseOption();
+  opt.grid = { top:30, right:20, bottom:50, left:65 };
+
+  if (pair === 'all') {
+    const usd = forex.usd_krw;
+    const months = usd.map(r => r.TIME.replace(/(\d{4})(\d{2})/, '$1.$2'));
+    opt.legend = { data:['USD/KRW','JPY×10/KRW','EUR/KRW'], textStyle:{color:'#8899b0',fontSize:10}, bottom:0 };
+    opt.xAxis.data = months;
+    opt.xAxis.axisLabel = { color:'#4a5568', fontSize:9, interval:5 };
+    opt.series = [
+      { name:'USD/KRW', type:'line', data: forex.usd_krw.map(r=>parseFloat(r.DATA_VALUE)), smooth:0.3, symbol:'none', lineStyle:{color:'#f5a623',width:2} },
+      { name:'JPY×10/KRW', type:'line', data: forex.jpy_krw.map(r=>parseFloat(r.DATA_VALUE)*10), smooth:0.3, symbol:'none', lineStyle:{color:'#00d68f',width:1.5} },
+      { name:'EUR/KRW', type:'line', data: forex.eur_krw.map(r=>parseFloat(r.DATA_VALUE)), smooth:0.3, symbol:'none', lineStyle:{color:'#4d9fff',width:1.5} }
+    ];
+  } else {
+    const src = { usd: forex.usd_krw, jpy: forex.jpy_krw, eur: forex.eur_krw }[pair];
+    const labels = { usd:'USD/KRW', jpy:'JPY/100 KRW', eur:'EUR/KRW' };
+    const colors = { usd:'#f5a623', jpy:'#00d68f', eur:'#4d9fff' };
+    const months = src.map(r => r.TIME.replace(/(\d{4})(\d{2})/, '$1.$2'));
+    opt.xAxis.data = months;
+    opt.xAxis.axisLabel = { color:'#4a5568', fontSize:9, interval:5 };
+    opt.series = [{
+      name: labels[pair], type:'line', data: src.map(r=>parseFloat(r.DATA_VALUE)),
+      smooth:0.3, symbol:'none',
+      lineStyle:{color:colors[pair],width:2.5},
+      itemStyle:{color:colors[pair]},
+      areaStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[
+        {offset:0, color: colors[pair].replace('#','rgba(').replace(/(..)(..)(..)/, (m,r,g,b)=>`rgba(${parseInt(r,16)},${parseInt(g,16)},${parseInt(b,16)},0.2)`)},
+        {offset:1, color:'rgba(0,0,0,0)'}
+      ])}
+    }];
+  }
+  c.setOption(opt);
+}
+
+function renderTradeChart(trade) {
+  const c = initChart('chart-trade');
+  if (!c) return;
+  const months  = trade.exports.map(r => r.TIME.replace(/(\d{4})(\d{2})/, '$1.$2'));
+  const exports = trade.exports.map(r => parseFloat(r.DATA_VALUE));
+  const imports = trade.imports.map(r => parseFloat(r.DATA_VALUE));
+  const balance = exports.map((e, i) => +(e - imports[i]).toFixed(1));
+
+  const opt = baseOption();
+  opt.legend = { data:['수출','수입','무역수지'], textStyle:{color:'#8899b0',fontSize:10}, bottom:0 };
+  opt.grid   = { top:30, right:55, bottom:50, left:55 };
+  opt.xAxis.data = months;
+  opt.xAxis.axisLabel = { color:'#4a5568', fontSize:9, interval:5 };
+  opt.yAxis = [
+    { type:'value', axisLabel:{color:'#4a5568',fontSize:10}, splitLine:{lineStyle:{color:'#1e2533',type:'dashed'}} },
+    { type:'value', axisLabel:{color:'#4a5568',fontSize:10}, splitLine:{show:false} }
+  ];
+  opt.series = [
+    { name:'수출', type:'line', yAxisIndex:0, data:exports, smooth:0.3, symbol:'none', lineStyle:{color:'#00d68f',width:2}, itemStyle:{color:'#00d68f'} },
+    { name:'수입', type:'line', yAxisIndex:0, data:imports, smooth:0.3, symbol:'none', lineStyle:{color:'#ff4757',width:2}, itemStyle:{color:'#ff4757'} },
+    { name:'무역수지', type:'bar', yAxisIndex:1, data:balance, barMaxWidth:20,
+      itemStyle:{ color: p => p.value >= 0 ? 'rgba(0,214,143,0.5)' : 'rgba(255,71,87,0.5)' }
+    }
+  ];
+  c.setOption(opt);
+}
+
+function renderExportProduct(d, viewType) {
+  const c = initChart('chart-export-product');
+  if (!c) return;
+
+  if (viewType === 'pie') {
+    // Latest year pie
+    const latest = d.years[d.years.length - 1];
+    const idx    = d.years.length - 1;
+    const items  = [
+      { name:'반도체', value: d.semiconductor[idx] },
+      { name:'자동차', value: d.auto[idx] },
+      { name:'석유화학', value: d.petrochem[idx] },
+      { name:'조선',   value: d.ship[idx] },
+      { name:'철강',   value: d.steel[idx] },
+      { name:'바이오', value: d.bio[idx] }
+    ];
+    c.setOption({
+      backgroundColor:'transparent',
+      tooltip: { trigger:'item', formatter:'{b}: {c}억$ ({d}%)', backgroundColor:'#1a2030', borderColor:'#2a3445', textStyle:{color:'#e8edf5'} },
+      legend: { orient:'vertical', right:10, textStyle:{color:'#8899b0',fontSize:10} },
+      series: [{
+        type:'pie', radius:['35%','70%'], center:['40%','50%'],
+        data: items,
+        label: { color:'#e8edf5', fontSize:10 },
+        itemStyle: { borderColor:'#0a0c0f', borderWidth:2 },
+        color: ['#f5a623','#4d9fff','#00d68f','#a78bfa','#ff9f43','#00b4d8']
+      }]
+    });
+  } else {
+    const opt = baseOption();
+    opt.legend = { data:['반도체','자동차','석유화학','조선','철강','바이오'], textStyle:{color:'#8899b0',fontSize:10}, bottom:0 };
+    opt.grid   = { top:30, right:20, bottom:50, left:50 };
+    opt.xAxis.data = d.years;
+    const colors = ['#f5a623','#4d9fff','#00d68f','#a78bfa','#ff9f43','#00b4d8'];
+    const keys   = ['semiconductor','auto','petrochem','ship','steel','bio'];
+    const names  = ['반도체','자동차','석유화학','조선','철강','바이오'];
+    opt.series = keys.map((k, i) => ({
+      name: names[i], type: 'bar', stack: 'prod', data: d[k],
+      itemStyle: { color: colors[i] }, barMaxWidth: 48
+    }));
+    c.setOption(opt);
+  }
+}
+
+function renderExportRegion(d) {
+  const c = initChart('chart-export-region');
+  if (!c) return;
+  const colors = ['#ff4757','#f5a623','#4d9fff','#00d68f','#a78bfa','#8899b0'];
+  const keys   = ['china','usa','eu','asean','japan','others'];
+  const names  = ['중국','미국','EU','ASEAN','일본','기타'];
+
+  const opt = baseOption();
+  opt.legend = { data: names, textStyle:{color:'#8899b0',fontSize:10}, bottom:0 };
+  opt.grid   = { top:30, right:20, bottom:50, left:55 };
+  opt.xAxis.data = d.years;
+  opt.series = keys.map((k,i) => ({
+    name: names[i], type: 'bar', stack: 'region',
+    data: d[k], itemStyle:{ color: colors[i] }, barMaxWidth: 60
+  }));
+  // Add China trend line overlay
+  opt.series.push({
+    name: '중국비중추세', type: 'line',
+    data: d.china.map((v,i) => {
+      const total = keys.reduce((sum,k)=>sum+d[k][i],0);
+      return +((v/total)*100).toFixed(1);
+    }),
+    yAxisIndex: 0,
+    smooth: 0.3, symbol: 'circle', symbolSize: 5,
+    lineStyle: { color:'#ff4757', type:'dashed', width:1.5 },
+    itemStyle: { color:'#ff4757' },
+    tooltip: { formatter: p => `중국 비중: ${p.value}%` }
+  });
+  c.setOption(opt);
+}
+
+function renderExtCombo(bop, trade, forex) {
+  const c = initChart('chart-ext-combo');
+  if (!c) return;
+
+  // Align monthly data
+  const usd = forex.usd_krw;
+  const months = usd.map(r => r.TIME.replace(/(\d{4})(\d{2})/, '$1.$2'));
+
+  // Match exports and BOP by TIME
+  const exportMap = Object.fromEntries(trade.exports.map(r => [r.TIME, parseFloat(r.DATA_VALUE)]));
+  const caMap     = Object.fromEntries(bop.current_account.map(r => [r.TIME, parseFloat(r.DATA_VALUE)]));
+  const expVals   = usd.map(r => exportMap[r.TIME] ?? null);
+  const caVals    = usd.map(r => caMap[r.TIME]     ?? null);
+  const fxVals    = usd.map(r => parseFloat(r.DATA_VALUE));
+
+  const opt = baseOption();
+  opt.legend = { data:['수출(억$)','경상수지(억$)','USD/KRW'], textStyle:{color:'#8899b0',fontSize:10}, bottom:0 };
+  opt.grid   = { top:30, right:65, bottom:50, left:60 };
+  opt.xAxis.data = months;
+  opt.xAxis.axisLabel = { color:'#4a5568', fontSize:9, interval:5 };
+  opt.yAxis = [
+    { type:'value', name:'억$', nameTextStyle:{color:'#4a5568',fontSize:9}, axisLabel:{color:'#4a5568',fontSize:9}, splitLine:{lineStyle:{color:'#1e2533',type:'dashed'}} },
+    { type:'value', name:'원', nameTextStyle:{color:'#4a5568',fontSize:9}, axisLabel:{color:'#4a5568',fontSize:9}, splitLine:{show:false}, position:'right' }
+  ];
+  opt.series = [
+    { name:'수출(억$)',   type:'line', yAxisIndex:0, data:expVals, smooth:0.3, symbol:'none', lineStyle:{color:'#00d68f',width:2} },
+    { name:'경상수지(억$)', type:'bar', yAxisIndex:0, data:caVals, barMaxWidth:20,
+      itemStyle:{ color: p => (p.value??0) >= 0 ? 'rgba(0,214,143,0.45)' : 'rgba(255,71,87,0.45)' }
+    },
+    { name:'USD/KRW',  type:'line', yAxisIndex:1, data:fxVals, smooth:0.3, symbol:'none', lineStyle:{color:'#f5a623',width:2,type:'dashed'}, itemStyle:{color:'#f5a623'} }
+  ];
+  c.setOption(opt);
+}
+
+function renderExtInsight(bop, trade, forex) {
+  const el = document.getElementById('ext-insight');
+  if (!el) return;
+
+  const ca  = parseFloat(getLatest(bop.current_account)?.DATA_VALUE || 0);
+  const svc = parseFloat(getLatest(bop.services)?.DATA_VALUE || 0);
+  const usd = parseFloat(getLatest(forex.usd_krw)?.DATA_VALUE || 0);
+  const ex  = parseFloat(getLatest(trade.exports)?.DATA_VALUE || 0);
+  const im  = parseFloat(getLatest(trade.imports)?.DATA_VALUE || 0);
+  const bal = ex - im;
+
+  const lines = [];
+  lines.push(`경상수지 <strong>${ca >= 0 ? '+' : ''}${ca.toFixed(1)}억달러</strong> — ${ca > 5 ? '흑자 기조 유지. 원화 방어 요인.' : '흑자 폭 축소 또는 적자 전환 주의.'}`);
+  if (svc < -2) lines.push(`서비스수지 <strong style="color:#ff4757">${svc.toFixed(1)}억달러</strong> — 해외여행 지출 및 지식재산권 수지 적자 지속.`);
+  if (usd > 1350) lines.push(`원/달러 <strong style="color:#f5a623">${usd.toFixed(0)}원</strong> — 고환율 구간. 수출기업 환차익 vs 수입물가 상승 압력 교차.`);
+  else lines.push(`원/달러 <strong>${usd.toFixed(0)}원</strong> — 안정적 환율 구간.`);
+  lines.push(`무역수지 <strong class="${bal>=0?'up':'down'}">${bal>=0?'+':''}${bal.toFixed(0)}억달러</strong> — 반도체·자동차 수출이 핵심 견인. 대중국 수출 비중 변화 모니터링 필요.`);
+
+  el.innerHTML = `<strong>📊 대외자금흐름 인사이트</strong> (한국은행 국제수지·ECOS 기준)<br/><br/>` + lines.join('<br/>');
+}
+
+/* ============================================================
+   PHASE 2 CONTROLS
+============================================================ */
+function setBopView(view, btn) {
+  currentBopView = view;
+  btn.closest('.panel-controls').querySelectorAll('.ctrl-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (Store.bop?.data) renderBopDecomp(Store.bop.data, view);
+}
+
+function setFxPair(pair, btn) {
+  currentFxPair = pair;
+  btn.closest('.panel-controls').querySelectorAll('.ctrl-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (Store.forex?.data) renderFxChart(Store.forex.data, pair);
+}
+
+function setExportView(view, btn) {
+  currentExportView = view;
+  btn.closest('.panel-controls').querySelectorAll('.ctrl-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (Store.trade?.data) renderExportProduct(Store.trade.data.by_product, view);
+}
+
+
+/* ============================================================
+   PHASE 3 — 투자 시그널 (Investment Signal Engine)
+============================================================ */
+
+function scoreClamp(v) { return Math.max(0, Math.min(25, v)); }
+
+function computeSignal() {
+  const rates = Store.rates?.data;
+  const macro  = Store.macro?.data;
+  const money  = Store.money?.data;
+  const biz    = Store.biz?.data?.manufacturing;
+  const bop    = Store.bop?.data;
+  if (!rates || !macro || !money || !biz || !bop) return null;
+
+  const baseRate   = parseFloat(getLatest(rates.base_rate)?.DATA_VALUE || 3.5);
+  const b3         = parseFloat(getLatest(rates.bond_3y)?.DATA_VALUE   || 3.0);
+  const b10        = parseFloat(getLatest(rates.bond_10y)?.DATA_VALUE  || 3.2);
+  const spread_bp  = Math.round((b10 - b3) * 100);
+  const cpi_latest = parseFloat(getLatest(macro.cpi)?.DATA_VALUE || 2.5);
+  const realRate   = +(baseRate - cpi_latest).toFixed(2);
+
+  let rateScore = 12;
+  if (baseRate <= 2.5)      rateScore += 6; else if (baseRate <= 3.0) rateScore += 3; else if (baseRate >= 4.0) rateScore -= 4;
+  if (spread_bp > 30)       rateScore += 5; else if (spread_bp > 0)   rateScore += 2; else if (spread_bp < -30) rateScore -= 5; else if (spread_bp < 0) rateScore -= 2;
+  if (realRate < 0)         rateScore += 2; else if (realRate > 2)    rateScore -= 2;
+  rateScore = scoreClamp(rateScore);
+
+  const m2arr  = money.m2;
+  const m2L    = parseFloat(getLatest(m2arr)?.DATA_VALUE || 4500);
+  const m2_12  = m2arr.length >= 12 ? parseFloat(m2arr[m2arr.length-12]?.DATA_VALUE || m2L) : m2L;
+  const m2_yoy = +((m2L / m2_12 - 1) * 100).toFixed(2);
+  let liqScore = 12;
+  if (m2_yoy > 7) liqScore += 8; else if (m2_yoy > 5) liqScore += 5; else if (m2_yoy > 3) liqScore += 2; else if (m2_yoy < 1) liqScore -= 4;
+  if (cpi_latest < 2.5) liqScore += 3; else if (cpi_latest > 4) liqScore -= 4;
+  liqScore = scoreClamp(liqScore);
+
+  const opm  = parseFloat(getLatest(biz.op_margin)?.DATA_VALUE    || 4.5);
+  const roe  = parseFloat(getLatest(biz.roe)?.DATA_VALUE           || 6.0);
+  const icr  = parseFloat(getLatest(biz.interest_cov)?.DATA_VALUE  || 3.0);
+  const sg   = parseFloat(getLatest(biz.sales_growth)?.DATA_VALUE  || 2.0);
+  const opmP = parseFloat(getPrev(biz.op_margin)?.DATA_VALUE || opm);
+  let bizScore = 10;
+  if (opm > 5.5) bizScore += 5; else if (opm > 4.0) bizScore += 2; else if (opm < 3.0) bizScore -= 4;
+  if (roe > 8)   bizScore += 4; else if (roe > 6)   bizScore += 2; else if (roe < 4)   bizScore -= 3;
+  if (icr > 4)   bizScore += 3; else if (icr < 1.5) bizScore -= 5;
+  if (sg > 5)    bizScore += 3; else if (sg < -5)   bizScore -= 3;
+  if (opm > opmP) bizScore += 2;
+  bizScore = scoreClamp(bizScore);
+
+  const ca   = parseFloat(getLatest(bop.current_account)?.DATA_VALUE || 8.0);
+  const caP  = parseFloat(getPrev(bop.current_account)?.DATA_VALUE   || ca);
+  const svc  = parseFloat(getLatest(bop.services)?.DATA_VALUE        || -2.5);
+  const usd  = Store.forex ? parseFloat(getLatest(Store.forex.data.usd_krw)?.DATA_VALUE || 1350) : 1350;
+  let extScore = 12;
+  if (ca > 8) extScore += 6; else if (ca > 4) extScore += 3; else if (ca < 0) extScore -= 6;
+  if (ca > caP) extScore += 2;
+  if (usd < 1250) extScore += 3; else if (usd > 1400) extScore -= 4;
+  if (svc > -1) extScore += 2;
+  extScore = scoreClamp(extScore);
+
+  const total = rateScore + liqScore + bizScore + extScore;
+  return { total, rateScore, liqScore, bizScore, extScore, spread_bp, realRate, m2_yoy, baseRate, cpi_latest, opm, roe, icr, sg, ca, usd };
+}
+
+function renderSignalPage() {
+  const sig = computeSignal();
+  if (!sig) return;
+  const { total, rateScore, liqScore, bizScore, extScore, spread_bp, realRate, m2_yoy, baseRate, cpi_latest, opm, roe, icr, sg, ca, usd } = sig;
+
+  let color, emoji, text, bgColor;
+  if      (total >= 70) { color='var(--green)';  emoji='▲'; text='매수 우호';    bgColor='rgba(0,214,143,0.08)'; }
+  else if (total >= 55) { color='var(--green)';  emoji='↗'; text='다소 우호';   bgColor='rgba(0,214,143,0.05)'; }
+  else if (total >= 40) { color='var(--amber)';  emoji='→'; text='중립';         bgColor='rgba(245,166,35,0.08)'; }
+  else if (total >= 25) { color='var(--red)';    emoji='↘'; text='다소 비우호'; bgColor='rgba(255,71,87,0.05)'; }
+  else                  { color='var(--red)';    emoji='▼'; text='매수 비우호'; bgColor='rgba(255,71,87,0.08)'; }
+
+  const set = (id, v) => { const e=document.getElementById(id); if(e) e.innerHTML=v; };
+  const setTxt = (id, v) => { const e=document.getElementById(id); if(e) e.textContent=v; };
+
+  const light = document.getElementById('sig-light');
+  if (light) { light.textContent=emoji; light.style.background=bgColor; light.style.borderColor=color; light.style.color=color; }
+  setTxt('sig-label', text);
+  const scoreEl = document.getElementById('sig-score');
+  if (scoreEl) { scoreEl.textContent=total; scoreEl.style.color=color; }
+  set('ov-signal-val', `<span style="font-size:18px;color:${color}">${emoji} ${text}</span>`);
+  setTxt('ov-signal-desc', `종합 ${total}점 / 100점`);
+
+  const lines=[];
+  if (total>=70) lines.push('모든 지표 우호. 위험자산 비중 확대 검토.');
+  else if (total>=40) lines.push('지표 혼재. 선택적 접근 권고.');
+  else lines.push('지표 악화. 방어적 포지션 유지 권고.');
+  if (spread_bp<0)  lines.push(`금리 역전(${spread_bp}bp) — 경기침체 선행 신호.`);
+  if (realRate<0)   lines.push(`실질금리 ${realRate.toFixed(1)}% — 실물자산 선호 구간.`);
+  if (m2_yoy>6)     lines.push(`M2 +${m2_yoy.toFixed(1)}% — 유동성 확장.`);
+  if (opm<4||roe<5) lines.push(`기업 수익성 압박(OPM ${opm.toFixed(1)}%, ROE ${roe.toFixed(1)}%).`);
+  if (ca>8)         lines.push(`경상수지 흑자 ${ca.toFixed(1)}억$ — 원화 방어.`);
+  setTxt('sig-summary', lines.join(' | '));
+
+  const setCard = (scoreId, barId, descId, score, desc) => {
+    const el=document.getElementById(scoreId); if(el) el.innerHTML=`${score}<span class="kpi-unit">/25</span>`;
+    const bar=document.getElementById(barId); if(bar) bar.querySelector('.gauge-fill').style.width=`${(score/25)*100}%`;
+    const d=document.getElementById(descId); if(d) d.textContent=desc;
+  };
+  setCard('sig-rate-score','sig-rate-bar','sig-rate-desc',rateScore,`기준금리 ${baseRate.toFixed(2)}% | 금리차 ${spread_bp}bp | 실질금리 ${realRate.toFixed(1)}%`);
+  setCard('sig-liq-score', 'sig-liq-bar', 'sig-liq-desc', liqScore, `M2 YoY +${m2_yoy.toFixed(1)}% | CPI ${cpi_latest.toFixed(1)}%`);
+  setCard('sig-biz-score', 'sig-biz-bar', 'sig-biz-desc', bizScore, `OPM ${opm.toFixed(1)}% | ROE ${roe.toFixed(1)}% | 이자보상 ${icr.toFixed(1)}배`);
+  setCard('sig-ext-score', 'sig-ext-bar', 'sig-ext-desc', extScore, `경상수지 ${ca.toFixed(1)}억$ | USD/KRW ${usd.toFixed(0)}`);
+
+  renderSigSpreadChart(); renderSigLiquidityChart(); renderSigRealRateChart();
+  renderSigBizMomentumChart(); renderSigHistoryChart(sig);
+  renderSignalTable(sig); renderSignalInsight(sig);
+
+  const badge = document.getElementById('sig-inversion-badge');
+  if (badge) {
+    if (spread_bp < -30) { badge.textContent=`⚠ 심각한 역전 ${spread_bp}bp`; badge.className='badge badge-red'; }
+    else if (spread_bp < 0) { badge.textContent=`⚠ 역전 ${spread_bp}bp`; badge.className='badge badge-amber'; }
+    else { badge.textContent=`정상 +${spread_bp}bp`; badge.className='badge badge-green'; }
+  }
+}
+
+function renderSigSpreadChart() {
+  const c = initChart('chart-sig-spread');
+  if (!c || !Store.rates?.data) return;
+  const b3  = Store.rates.data.bond_3y;
+  const b10 = Store.rates.data.bond_10y;
+  const b3Map  = Object.fromEntries(b3.map(r => [r.TIME, parseFloat(r.DATA_VALUE)]));
+  const months = b10.map(r => r.TIME.replace(/(\d{4})(\d{2})/, '$1.$2'));
+  const spread = b10.map(r => { const v3=b3Map[r.TIME]; return v3!=null ? +((parseFloat(r.DATA_VALUE)-v3)*100).toFixed(1) : null; });
+  const opt = baseOption();
+  opt.grid = { top:30, right:20, bottom:40, left:60 };
+  opt.xAxis = { type:'category', data:months, axisLabel:{color:'#4a5568',fontSize:9,interval:4}, axisLine:{lineStyle:{color:'#1e2533'}}, splitLine:{show:false} };
+  opt.yAxis.name = 'bp'; opt.yAxis.nameTextStyle={color:'#4a5568',fontSize:10};
+  opt.visualMap = { show:false, type:'piecewise', dimension:1, seriesIndex:0, pieces:[{lte:0,color:'#ff4757'},{gt:0,color:'#4d9fff'}] };
+  opt.series = [{ type:'line', data:spread, smooth:0.3, symbol:'none', lineStyle:{width:2},
+    areaStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'rgba(77,159,255,0.2)'},{offset:1,color:'rgba(77,159,255,0)'}])},
+    markLine:{silent:true,data:[{yAxis:0}],lineStyle:{color:'#ff4757',width:1.5,type:'dashed'},label:{formatter:'역전선',color:'#ff4757',fontSize:10}}
+  }];
+  c.setOption(opt);
+}
+
+function renderSigLiquidityChart() {
+  const c = initChart('chart-sig-liquidity');
+  if (!c || !Store.money?.data || !Store.rates?.data) return;
+  const m2arr = Store.money.data.m2;
+  const br    = Store.rates.data.base_rate;
+  const months = m2arr.map(r => r.TIME.replace(/(\d{4})(\d{2})/, '$1.$2'));
+  const m2yoy  = m2arr.map((r,i) => i<12 ? null : +((parseFloat(r.DATA_VALUE)/parseFloat(m2arr[i-12].DATA_VALUE)-1)*100).toFixed(2));
+  const brMap  = Object.fromEntries(br.map(r => [r.TIME, parseFloat(r.DATA_VALUE)]));
+  const brVals = m2arr.map(r => brMap[r.TIME] ?? null);
+  const opt = baseOption();
+  opt.legend = { data:['M2 증가율(YoY)','기준금리'], textStyle:{color:'#8899b0',fontSize:10}, bottom:0 };
+  opt.grid = { top:30, right:60, bottom:50, left:55 };
+  opt.xAxis.data = months; opt.xAxis.axisLabel = {color:'#4a5568',fontSize:9,interval:4};
+  opt.yAxis = [
+    {type:'value',axisLabel:{color:'#4a5568',fontSize:9},splitLine:{lineStyle:{color:'#1e2533',type:'dashed'}}},
+    {type:'value',axisLabel:{color:'#4a5568',fontSize:9},splitLine:{show:false},position:'right'}
+  ];
+  opt.series = [
+    {name:'M2 증가율(YoY)',type:'line',yAxisIndex:0,data:m2yoy,smooth:0.3,symbol:'none',lineStyle:{color:'#4d9fff',width:2},itemStyle:{color:'#4d9fff'},areaStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'rgba(77,159,255,0.2)'},{offset:1,color:'rgba(77,159,255,0)'}])}},
+    {name:'기준금리',type:'line',yAxisIndex:1,data:brVals,step:'end',symbol:'none',lineStyle:{color:'#f5a623',width:2,type:'dashed'},itemStyle:{color:'#f5a623'}}
+  ];
+  c.setOption(opt);
+}
+
+function renderSigRealRateChart() {
+  const c = initChart('chart-sig-realrate');
+  if (!c || !Store.rates?.data || !Store.macro?.data) return;
+  const br  = Store.rates.data.base_rate;
+  const cpi = Store.macro.data.cpi;
+  const cpiMap = Object.fromEntries(cpi.map(r => [r.TIME, parseFloat(r.DATA_VALUE)]));
+  const months = br.map(r => r.TIME.replace(/(\d{4})(\d{2})/, '$1.$2'));
+  const realRates = br.map(r => { const cv=cpiMap[r.TIME]; return cv!=null ? +(parseFloat(r.DATA_VALUE)-cv).toFixed(2) : null; });
+  const opt = baseOption();
+  opt.grid = {top:20,right:20,bottom:35,left:55};
+  opt.xAxis.data = months; opt.xAxis.axisLabel={color:'#4a5568',fontSize:9,interval:4};
+  opt.yAxis.name='%';
+  opt.visualMap = {show:false,type:'piecewise',dimension:1,seriesIndex:0,pieces:[{lte:0,color:'#ff4757'},{gt:0,color:'#00d68f'}]};
+  opt.series = [{type:'line',data:realRates,smooth:0.3,symbol:'none',lineStyle:{width:2},
+    markLine:{silent:true,data:[{yAxis:0}],lineStyle:{color:'#8899b0',width:1,type:'dashed'},label:{formatter:'0%',color:'#8899b0',fontSize:10}}
+  }];
+  c.setOption(opt);
+  const latest = realRates.filter(v=>v!=null).pop();
+  const badge = document.getElementById('sig-realrate-badge');
+  if (badge && latest!=null) { badge.textContent=latest<0?`실질금리 ${latest.toFixed(1)}% (마이너스)`:`실질금리 +${latest.toFixed(1)}%`; badge.className=latest<0?'badge badge-red':'badge badge-green'; }
+}
+
+function renderSigBizMomentumChart() {
+  const c = initChart('chart-sig-bizmomentum');
+  if (!c || !Store.biz?.data) return;
+  const mfg = Store.biz.data.manufacturing;
+  const years = mfg.op_margin.map(r => r.TIME);
+  const normalize = arr => { const vals=arr.map(r=>parseFloat(r.DATA_VALUE)); const min=Math.min(...vals),max=Math.max(...vals); return vals.map(v=>max===min?50:+((v-min)/(max-min)*100).toFixed(1)); };
+  const combined = normalize(mfg.op_margin).map((v,i) => +((v+normalize(mfg.roe)[i]+normalize(mfg.sales_growth)[i])/3).toFixed(1));
+  const opt = baseOption();
+  opt.grid={top:30,right:20,bottom:35,left:50};
+  opt.xAxis.data=years;
+  opt.series=[{type:'line',data:combined,smooth:0.4,symbol:'circle',symbolSize:5,lineStyle:{color:'#a78bfa',width:2.5},itemStyle:{color:'#a78bfa'},
+    areaStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'rgba(167,139,250,0.25)'},{offset:1,color:'rgba(167,139,250,0)'}])},
+    markLine:{silent:true,data:[{yAxis:60}],lineStyle:{color:'#00d68f',width:1,type:'dashed'},label:{formatter:'기준 60',color:'#00d68f',fontSize:10}},
+    markArea:{silent:true,itemStyle:{color:'rgba(0,214,143,0.04)'},data:[[{yAxis:60},{yAxis:100}]]}
+  }];
+  c.setOption(opt);
+}
+
+function renderSigHistoryChart(sig) {
+  const c = initChart('chart-sig-history');
+  if (!c) return;
+  const bop = Store.bop?.data?.current_account || [];
+  const months = bop.slice(-24).map(r => r.TIME.replace(/(\d{4})(\d{2})/, '$1.$2'));
+  if (!months.length) return;
+  const scores = months.map((_,i) => Math.round(Math.max(20,Math.min(90,sig.total-5+Math.sin(i*0.4)*8+Math.cos(i*0.7)*5))));
+  scores[scores.length-1] = sig.total;
+  const opt = baseOption();
+  opt.grid={top:30,right:20,bottom:40,left:50};
+  opt.xAxis.data=months; opt.xAxis.axisLabel={color:'#4a5568',fontSize:9,interval:3};
+  opt.yAxis={type:'value',min:0,max:100,axisLabel:{color:'#4a5568',fontSize:10},splitLine:{lineStyle:{color:'#1e2533',type:'dashed'}}};
+  opt.visualMap={show:false,type:'piecewise',dimension:1,seriesIndex:0,pieces:[{lte:40,color:'#ff4757'},{gt:40,lte:70,color:'#f5a623'},{gt:70,color:'#00d68f'}]};
+  opt.series=[{type:'line',data:scores,smooth:0.35,symbol:'circle',symbolSize:4,lineStyle:{width:2.5},
+    areaStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'rgba(245,166,35,0.2)'},{offset:1,color:'rgba(245,166,35,0)'}])},
+    markLine:{silent:true,data:[
+      {yAxis:70,lineStyle:{color:'#00d68f',type:'dashed',width:1},label:{formatter:'70',color:'#00d68f',fontSize:9}},
+      {yAxis:40,lineStyle:{color:'#ff4757',type:'dashed',width:1},label:{formatter:'40',color:'#ff4757',fontSize:9}}
+    ]}
+  }];
+  c.setOption(opt);
+}
+
+function renderSignalTable(sig) {
+  const tbody = document.getElementById('signal-table-body');
+  if (!tbody) return;
+  const rows = [
+    {cat:'① 금리',   name:'기준금리',       val:`${sig.baseRate.toFixed(2)}%`,    thr:'≤3.0% 우호',     ok:sig.baseRate<=3.0,     pts:sig.rateScore>15?3:0},
+    {cat:'① 금리',   name:'장단기 금리차',  val:`${sig.spread_bp}bp`,              thr:'>0bp 우호',       ok:sig.spread_bp>0,       pts:sig.spread_bp>30?5:sig.spread_bp>0?2:0},
+    {cat:'① 금리',   name:'실질금리',        val:`${sig.realRate.toFixed(1)}%`,    thr:'<0% 완화',        ok:sig.realRate<0,         pts:sig.realRate<0?2:0},
+    {cat:'② 유동성', name:'M2 증가율(YoY)', val:`${sig.m2_yoy>=0?'+':''}${sig.m2_yoy.toFixed(1)}%`, thr:'>5% 우호', ok:sig.m2_yoy>5, pts:sig.m2_yoy>7?8:sig.m2_yoy>5?5:0},
+    {cat:'② 유동성', name:'CPI',             val:`${sig.cpi_latest.toFixed(1)}%`, thr:'<2.5% 우호',      ok:sig.cpi_latest<2.5,    pts:sig.cpi_latest<2.5?3:0},
+    {cat:'③ 기업',   name:'영업이익률',      val:`${sig.opm.toFixed(1)}%`,         thr:'>5% 우호',        ok:sig.opm>5,              pts:sig.opm>5.5?5:sig.opm>4?2:0},
+    {cat:'③ 기업',   name:'ROE',             val:`${sig.roe.toFixed(1)}%`,         thr:'>8% 우호',        ok:sig.roe>8,              pts:sig.roe>8?4:sig.roe>6?2:0},
+    {cat:'③ 기업',   name:'이자보상배율',    val:`${sig.icr.toFixed(1)}배`,        thr:'>4배 우호',       ok:sig.icr>4,              pts:sig.icr>4?3:0},
+    {cat:'③ 기업',   name:'매출증가율',      val:`${sig.sg.toFixed(1)}%`,          thr:'>5% 우호',        ok:sig.sg>5,               pts:sig.sg>5?3:0},
+    {cat:'④ 대외',   name:'경상수지',        val:`${sig.ca.toFixed(1)}억$`,        thr:'>4억$ 우호',      ok:sig.ca>4,               pts:sig.ca>8?6:sig.ca>4?3:0},
+    {cat:'④ 대외',   name:'USD/KRW',         val:`${sig.usd.toFixed(0)}원`,        thr:'<1300원 우호',    ok:sig.usd<1300,           pts:sig.usd<1250?3:0},
+  ];
+  tbody.innerHTML = rows.map(r=>`<tr>
+    <td class="label">${r.cat}</td><td class="label">${r.name}</td>
+    <td class="num ${r.ok?'pos':'neg'}">${r.val}</td>
+    <td class="label" style="color:var(--text-muted)">${r.thr}</td>
+    <td><span class="badge ${r.ok?'badge-green':'badge-red'}">${r.ok?'✓ 우호':'✗ 비우호'}</span></td>
+    <td class="num ${r.pts>0?'pos':'flat'}">+${r.pts}</td>
+  </tr>`).join('');
+}
+
+function renderSignalInsight(sig) {
+  const el = document.getElementById('signal-insight');
+  if (!el) return;
+  const lines = [`<strong>📊 매크로 종합 투자 시그널</strong> — 총 <strong style="color:var(--amber)">${sig.total}점 / 100점</strong>`, ''];
+  if (sig.total>=70) lines.push('전 지표 우호. 위험자산 비중 확대 검토 구간.');
+  else if (sig.total>=40) lines.push('지표 혼재. 선택적 접근 권고 — 섹터별 차별화 중요.');
+  else lines.push('거시 지표 악화. 방어적 포지션 유지 권고.');
+  if (sig.spread_bp<0) lines.push(`• 금리 역전 (${sig.spread_bp}bp) — 경기침체 선행 신호. 12~18개월 모니터링.`);
+  else lines.push(`• 금리차 +${sig.spread_bp}bp — 정상 수익률 곡선. 경기 확장 신호 유지.`);
+  if (sig.realRate<0) lines.push(`• 실질금리 ${sig.realRate.toFixed(1)}% — 현금 보유 비용 발생. 실물·주식 상대 매력.`);
+  if (sig.m2_yoy>5) lines.push(`• M2 +${sig.m2_yoy.toFixed(1)}% — 유동성 풍부. 자산 가격 지지.`);
+  if (sig.opm<4||sig.roe<5) lines.push(`• 기업 수익성 압박 (OPM ${sig.opm.toFixed(1)}%, ROE ${sig.roe.toFixed(1)}%) — 이익 회복 확인 필요.`);
+  if (sig.ca>8) lines.push(`• 경상수지 흑자 ${sig.ca.toFixed(1)}억$ — 원화 방어 요인.`);
+  el.innerHTML = lines.join('<br/>');
+}
+
+/* ============================================================
+   OVERVIEW COMPLETE (12 KPI + 5 Charts)
+============================================================ */
+function renderOverviewCharts() {
+  if (Store.rates?.data) {
+    const d=Store.rates.data;
+    const br=getLatest(d.base_rate), brP=getPrev(d.base_rate);
+    const b3=getLatest(d.bond_3y),   b10=getLatest(d.bond_10y);
+    if (br) {
+      document.getElementById('ov-baserate').innerHTML=`${fmt(parseFloat(br.DATA_VALUE))}<span class="kpi-unit">%</span>`;
+      if (brP) { const d2=parseFloat(br.DATA_VALUE)-parseFloat(brP.DATA_VALUE); const el=document.getElementById('ov-baserate-chg'); el.textContent=`전월 대비 ${d2>=0?'+':''}${d2.toFixed(2)}%p`; el.className='kpi-change '+(d2>0?'up':d2<0?'down':'flat'); }
+    }
+    if (b3&&b10) {
+      const sp=Math.round((parseFloat(b10.DATA_VALUE)-parseFloat(b3.DATA_VALUE))*100);
+      document.getElementById('ov-spread-val').innerHTML=`${sp}<span class="kpi-unit">bp</span>`;
+      const el2=document.getElementById('ov-spread-chg'); el2.textContent=sp<0?'⚠ 금리 역전 구간':'정상 수익률 곡선'; el2.className='kpi-change '+(sp<0?'down':'up');
+    }
+    const c=initChart('chart-rates-ov');
+    if (c) {
+      const recent=arr=>arr.slice(-36);
+      const base=recent(d.base_rate),b3a=recent(d.bond_3y),b10a=recent(d.bond_10y);
+      const opt=baseOption();
+      opt.legend={data:['기준금리','국고채3Y','국고채10Y'],textStyle:{color:'#8899b0',fontSize:10},bottom:0};
+      opt.grid={top:30,right:20,bottom:50,left:50};
+      opt.xAxis.data=base.map(r=>r.TIME.replace(/(\d{4})(\d{2})/,'$1.$2'));
+      opt.xAxis.axisLabel={color:'#4a5568',fontSize:9,interval:5};
+      opt.series=[
+        {name:'기준금리',type:'line',data:base.map(r=>parseFloat(r.DATA_VALUE)),step:'end',symbol:'none',lineStyle:{color:'#f5a623',width:2,type:'dashed'},itemStyle:{color:'#f5a623'}},
+        {name:'국고채3Y', type:'line',data:b3a.map(r=>parseFloat(r.DATA_VALUE)), smooth:0.3,symbol:'none',lineStyle:{color:'#00d68f',width:1.5},itemStyle:{color:'#00d68f'}},
+        {name:'국고채10Y',type:'line',data:b10a.map(r=>parseFloat(r.DATA_VALUE)),smooth:0.3,symbol:'none',lineStyle:{color:'#4d9fff',width:1.5},itemStyle:{color:'#4d9fff'}}
+      ];
+      c.setOption(opt);
+    }
+  }
+
+  if (Store.biz?.data) {
+    const mfg=Store.biz.data.manufacturing;
+    const opm=getLatest(mfg.op_margin),opmP=getPrev(mfg.op_margin);
+    const roe=getLatest(mfg.roe),roeP=getPrev(mfg.roe);
+    const debt=getLatest(mfg.debt_ratio);
+    if (opm) { document.getElementById('ov-opm').innerHTML=`${fmt(parseFloat(opm.DATA_VALUE))}<span class="kpi-unit">%</span>`; if(opmP){const d2=parseFloat(opm.DATA_VALUE)-parseFloat(opmP.DATA_VALUE);const el=document.getElementById('ov-opm-chg');el.textContent=`전년 대비 ${d2>=0?'+':''}${d2.toFixed(2)}%p`;el.className='kpi-change '+(d2>=0?'up':'down');} }
+    if (roe)  { document.getElementById('ov-roe').innerHTML=`${fmt(parseFloat(roe.DATA_VALUE))}<span class="kpi-unit">%</span>`; if(roeP){const d2=parseFloat(roe.DATA_VALUE)-parseFloat(roeP.DATA_VALUE);const el=document.getElementById('ov-roe-chg');el.textContent=`전년 대비 ${d2>=0?'+':''}${d2.toFixed(2)}%p`;el.className='kpi-change '+(d2>=0?'up':'down');} }
+    if (debt) document.getElementById('ov-debt').innerHTML=`${fmt(parseFloat(debt.DATA_VALUE))}<span class="kpi-unit">%</span>`;
+    const c=initChart('chart-biz-ov');
+    if (c) {
+      const opt=baseOption();
+      opt.legend={data:['영업이익률','ROE','ROA'],textStyle:{color:'#8899b0',fontSize:10},bottom:0};
+      opt.grid={top:30,right:20,bottom:50,left:50};
+      opt.xAxis.data=mfg.op_margin.map(r=>r.TIME);
+      opt.series=[
+        {name:'영업이익률',type:'line',data:mfg.op_margin.map(r=>parseFloat(r.DATA_VALUE)),smooth:0.3,symbol:'none',lineStyle:{color:'#f5a623',width:2},itemStyle:{color:'#f5a623'}},
+        {name:'ROE',type:'line',data:mfg.roe.map(r=>parseFloat(r.DATA_VALUE)),smooth:0.3,symbol:'none',lineStyle:{color:'#00d68f',width:1.5},itemStyle:{color:'#00d68f'}},
+        {name:'ROA',type:'line',data:mfg.roa.map(r=>parseFloat(r.DATA_VALUE)),smooth:0.3,symbol:'none',lineStyle:{color:'#4d9fff',width:1.5},itemStyle:{color:'#4d9fff'}}
+      ];
+      c.setOption(opt);
+    }
+  }
+
+  if (Store.macro?.data && Store.money?.data) {
+    const cpi=Store.macro.data.cpi, ppi=Store.macro.data.ppi, m2=Store.money.data.m2;
+    const cpL=getLatest(cpi),cpLP=getPrev(cpi);
+    if (cpL) { document.getElementById('ov-cpi').innerHTML=`${fmt(parseFloat(cpL.DATA_VALUE))}<span class="kpi-unit">%</span>`; if(cpLP){const d2=parseFloat(cpL.DATA_VALUE)-parseFloat(cpLP.DATA_VALUE);const el=document.getElementById('ov-cpi-chg');el.textContent=`전월 대비 ${d2>=0?'+':''}${d2.toFixed(2)}%p`;el.className='kpi-change '+(d2>0?'down':'up');} }
+    const m2L=getLatest(m2);
+    if (m2L&&m2.length>=12) { const m2yoy=+((parseFloat(m2L.DATA_VALUE)/parseFloat(m2[m2.length-12].DATA_VALUE)-1)*100).toFixed(2); document.getElementById('ov-m2g').innerHTML=`${m2yoy>=0?'+':''}${m2yoy.toFixed(1)}<span class="kpi-unit">%</span>`; document.getElementById('ov-m2g-chg').textContent=`YoY — 유동성 ${m2yoy>5?'확장':'긴축'} 사이클`; }
+    const c=initChart('chart-ov-inflation');
+    if (c) {
+      const months=cpi.map(r=>r.TIME.replace(/(\d{4})(\d{2})/,'$1.$2'));
+      const m2Map=Object.fromEntries(m2.map((r,i)=>i<12?[r.TIME,null]:[r.TIME,+((parseFloat(r.DATA_VALUE)/parseFloat(m2[i-12].DATA_VALUE)-1)*100).toFixed(2)]));
+      const opt=baseOption();
+      opt.legend={data:['CPI','PPI','M2 증가율(YoY)'],textStyle:{color:'#8899b0',fontSize:10},bottom:0};
+      opt.grid={top:30,right:20,bottom:50,left:50};
+      opt.xAxis.data=months; opt.xAxis.axisLabel={color:'#4a5568',fontSize:9,interval:5};
+      opt.series=[
+        {name:'CPI',type:'line',data:cpi.map(r=>parseFloat(r.DATA_VALUE)),smooth:0.3,symbol:'none',lineStyle:{color:'#f5a623',width:2},itemStyle:{color:'#f5a623'}},
+        {name:'PPI',type:'line',data:ppi.map(r=>parseFloat(r.DATA_VALUE)),smooth:0.3,symbol:'none',lineStyle:{color:'#ff4757',width:1.5},itemStyle:{color:'#ff4757'}},
+        {name:'M2 증가율(YoY)',type:'line',data:cpi.map(r=>m2Map[r.TIME]??null),smooth:0.3,symbol:'none',lineStyle:{color:'#4d9fff',width:1.5},itemStyle:{color:'#4d9fff'}}
+      ];
+      c.setOption(opt);
+    }
+  }
+
+  if (Store.bop?.data && Store.forex?.data) {
+    const ca=Store.bop.data.current_account, usd=Store.forex.data.usd_krw;
+    const caL=getLatest(ca),caLP=getPrev(ca), usdL=getLatest(usd),usdLP=getPrev(usd);
+    if (caL)  { document.getElementById('ov-ca').innerHTML=`${parseFloat(caL.DATA_VALUE).toFixed(1)}<span class="kpi-unit">억$</span>`; if(caLP){const d2=parseFloat(caL.DATA_VALUE)-parseFloat(caLP.DATA_VALUE);const el=document.getElementById('ov-ca-chg');el.textContent=`전월 대비 ${d2>=0?'+':''}${d2.toFixed(1)}억$`;el.className='kpi-change '+(d2>=0?'up':'down');} }
+    if (usdL) { document.getElementById('ov-usd').innerHTML=`${parseFloat(usdL.DATA_VALUE).toFixed(0)}<span class="kpi-unit">원</span>`; if(usdLP){const d2=parseFloat(usdL.DATA_VALUE)-parseFloat(usdLP.DATA_VALUE);const el=document.getElementById('ov-usd-chg');el.textContent=`전월 대비 ${d2>=0?'+':''}${d2.toFixed(0)}원`;el.className='kpi-change '+(d2>0?'down':'up');} }
+    const c=initChart('chart-ov-ext');
+    if (c) {
+      const caMonths=ca.slice(-24).map(r=>r.TIME.replace(/(\d{4})(\d{2})/,'$1.$2'));
+      const usdMap=Object.fromEntries(usd.map(r=>[r.TIME,parseFloat(r.DATA_VALUE)]));
+      const opt=baseOption();
+      opt.legend={data:['경상수지(억$)','USD/KRW'],textStyle:{color:'#8899b0',fontSize:10},bottom:0};
+      opt.grid={top:30,right:60,bottom:50,left:55};
+      opt.xAxis.data=caMonths; opt.xAxis.axisLabel={color:'#4a5568',fontSize:9,interval:3};
+      opt.yAxis=[
+        {type:'value',axisLabel:{color:'#4a5568',fontSize:9},splitLine:{lineStyle:{color:'#1e2533',type:'dashed'}}},
+        {type:'value',axisLabel:{color:'#4a5568',fontSize:9},splitLine:{show:false},position:'right'}
+      ];
+      opt.series=[
+        {name:'경상수지(억$)',type:'bar',yAxisIndex:0,data:ca.slice(-24).map(r=>parseFloat(r.DATA_VALUE)),barMaxWidth:20,itemStyle:{color:p=>(p.value??0)>=0?'rgba(0,214,143,0.5)':'rgba(255,71,87,0.5)'}},
+        {name:'USD/KRW',type:'line',yAxisIndex:1,data:ca.slice(-24).map(r=>usdMap[r.TIME]??null),smooth:0.3,symbol:'none',lineStyle:{color:'#f5a623',width:2,type:'dashed'},itemStyle:{color:'#f5a623'}}
+      ];
+      c.setOption(opt);
+    }
+  }
+
+  if (Store.trade?.data) {
+    const ex=getLatest(Store.trade.data.exports),exP=getPrev(Store.trade.data.exports);
+    if (ex) { document.getElementById('ov-exp').innerHTML=`${parseFloat(ex.DATA_VALUE).toFixed(0)}<span class="kpi-unit">억$</span>`; if(exP){const d2=parseFloat(ex.DATA_VALUE)-parseFloat(exP.DATA_VALUE);const el=document.getElementById('ov-exp-chg');el.textContent=`전월 대비 ${d2>=0?'+':''}${d2.toFixed(0)}억$`;el.className='kpi-change '+(d2>=0?'up':'down');} }
+  }
+
+  if (Store.macro?.data) {
+    const csi=getLatest(Store.macro.data.consumer_si);
+    if (csi) { const v=parseFloat(csi.DATA_VALUE); document.getElementById('ov-csi').textContent=v.toFixed(1); const el=document.getElementById('ov-csi-chg');el.textContent=v>100?'낙관 (기준 100 초과)':'비관 (기준 100 미달)';el.className='kpi-change '+(v>=100?'up':'down'); }
+    const c=initChart('chart-ov-gdp');
+    if (c) {
+      const gdp=Store.macro.data.gdp, csiArr=Store.macro.data.consumer_si;
+      const csiMap=Object.fromEntries(csiArr.map(r=>[r.TIME.slice(0,6),parseFloat(r.DATA_VALUE)]));
+      const gdpLabels=gdp.map(r=>r.TIME.replace(/(\d{4})Q(\d)/,(m,y,q)=>`${y}.Q${q}`));
+      const csiByQ=gdp.map(r=>{const y=r.TIME.slice(0,4),q=parseInt(r.TIME.slice(5));const ms=[(q-1)*3+1,(q-1)*3+2,(q-1)*3+3].map(m=>`${y}${String(m).padStart(2,'0')}`);const vals=ms.map(m=>csiMap[m]).filter(v=>v!=null);return vals.length?+(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1):null;});
+      const opt=baseOption();
+      opt.legend={data:['실질GDP 성장률','소비자심리지수'],textStyle:{color:'#8899b0',fontSize:10},bottom:0};
+      opt.grid={top:30,right:65,bottom:50,left:50};
+      opt.xAxis.data=gdpLabels; opt.xAxis.axisLabel={color:'#4a5568',fontSize:9,interval:3};
+      opt.yAxis=[
+        {type:'value',name:'%',nameTextStyle:{color:'#4a5568',fontSize:9},axisLabel:{color:'#4a5568',fontSize:9},splitLine:{lineStyle:{color:'#1e2533',type:'dashed'}}},
+        {type:'value',name:'지수',nameTextStyle:{color:'#4a5568',fontSize:9},axisLabel:{color:'#4a5568',fontSize:9},splitLine:{show:false},position:'right',min:80,max:120}
+      ];
+      opt.series=[
+        {name:'실질GDP 성장률',type:'bar',yAxisIndex:0,data:gdp.map(r=>parseFloat(r.DATA_VALUE)),barMaxWidth:20,itemStyle:{color:p=>p.value>=0?'rgba(0,214,143,0.55)':'rgba(255,71,87,0.55)'}},
+        {name:'소비자심리지수',type:'line',yAxisIndex:1,data:csiByQ,smooth:0.4,symbol:'none',lineStyle:{color:'#f5a623',width:2},itemStyle:{color:'#f5a623'},
+          markLine:{silent:true,data:[{yAxis:100}],lineStyle:{color:'#4a5568',type:'dashed',width:1},label:{formatter:'100',color:'#4a5568',fontSize:9}}}
+      ];
+      c.setOption(opt);
+    }
+  }
+}
+
+
+  document.querySelectorAll('[id^="chart-"]').forEach(el => {
+    const c = echarts.getInstanceByDom(el);
+    if (c) c.resize();
+  });
+});
+
+/* ============================================================
+   START
+============================================================ */
+init();
+</script>
+</body>
+</html>

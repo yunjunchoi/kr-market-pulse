@@ -1,0 +1,41 @@
+name: 📊 KR Market Pulse - Daily Data Fetch
+
+on:
+  schedule:
+    - cron: '0 22 * * *'   # 매일 오전 7시 KST (UTC 22:00)
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/fetch_ecos.py'
+
+permissions:
+  contents: write
+
+jobs:
+  fetch-data:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Fetch ECOS data
+        env:
+          ECOS_API_KEY: ${{ secrets.ECOS_API_KEY }}
+        run: python scripts/fetch_ecos.py
+
+      - name: Commit & Push data
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "📊 [KR Market Pulse] Auto-update: $(date +'%Y-%m-%d %H:%M KST')"
+          file_pattern: 'data/*.json'
+          commit_user_name: 'KRPulse-Bot'
+          commit_user_email: 'bot@kr-market-pulse.local'
