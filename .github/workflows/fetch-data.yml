@@ -39,3 +39,4 @@ jobs:
           file_pattern: 'data/*.json'
           commit_user_name: 'KRPulse-Bot'
           commit_user_email: 'bot@kr-market-pulse.local'
+          push_options: '--force'
