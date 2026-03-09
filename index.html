@@ -1220,7 +1220,10 @@ const Store = {
   ready: { biz:false, rates:false, fof:false, bop:false, trade:false, forex:false, macro:false, money:false }
 };
 
-const BASE_PATH = '/kr-market-pulse/data/';
+const BASE_PATH = (() => {
+  const p = window.location.pathname.split('/');
+  return p.length > 2 && p[1] ? `/${p[1]}/data/` : './data/';
+})();
 
 async function loadJSON(name) {
   try {
